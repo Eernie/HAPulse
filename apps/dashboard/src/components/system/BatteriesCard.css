@@ -1,0 +1,156 @@
+/* ===================================================
+   BatteriesCard
+   =================================================== */
+.batteries-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  /* Fill the grid cell height so the list stretches when placed next to a taller card */
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.batteries-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.batteries-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.batteries-card__icon-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--positive-soft);
+  color: var(--positive);
+  flex-shrink: 0;
+  transition: background 200ms ease-out, color 200ms ease-out;
+}
+
+.batteries-card__icon-chip--warn {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.batteries-card__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.batteries-card__low-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--warning) 20%, transparent);
+}
+
+/* Battery list — flex-grows to fill remaining card height */
+.bat-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  max-height: 400px;
+}
+
+.bat-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 80px 36px;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+  min-height: 44px;
+}
+
+.bat-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.bat-row:first-child {
+  padding-top: 0;
+}
+
+.bat-row__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bat-row__icon--ok   { color: var(--positive); }
+.bat-row__icon--warn { color: var(--warning); }
+
+.bat-row__name {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+}
+
+/* Progress bar */
+.bat-row__bar {
+  height: 4px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.bat-row__bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 600ms ease-out;
+}
+
+.bat-row__bar-fill--ok       { background: var(--positive); }
+.bat-row__bar-fill--medium   { background: var(--accent); }
+.bat-row__bar-fill--low      { background: var(--warning); }
+.bat-row__bar-fill--critical { background: var(--danger); }
+
+/* Percentage label */
+.bat-row__pct {
+  font-family: var(--font-data);
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+  text-align: right;
+}
+
+.bat-row__pct--low      { color: var(--warning); }
+.bat-row__pct--critical { color: var(--danger); }
+
+/* ===================================================
+   Responsive — narrower bar on small screens
+   =================================================== */
+@media (max-width: 479px) {
+  .bat-row {
+    grid-template-columns: 24px 1fr 52px 32px;
+    gap: 0.5rem;
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "hapulse",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A modern, themeable dashboard for Home Assistant.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jlnbln/HAPulse.git"
+  },
+  "workspaces": [
+    "packages/core",
+    "apps/dashboard"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @hapulse/dashboard",
+    "build": "npm run build -w @hapulse/core && npm run build -w @hapulse/dashboard",
+    "typecheck": "npm run typecheck -w @hapulse/core && npm run typecheck -w @hapulse/dashboard",
+    "test": "npm test -w @hapulse/core"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

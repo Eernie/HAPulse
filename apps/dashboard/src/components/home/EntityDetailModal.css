@@ -1,0 +1,65 @@
+.entity-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.entity-detail__control {
+  /* The EntityCard renders its own surface; let it span full width. */
+  display: block;
+}
+
+.entity-detail__attrs {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+
+.entity-detail__attrs-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.6rem;
+}
+
+.entity-detail__attr-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.entity-detail__attr-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.entity-detail__attr-row:last-child {
+  border-bottom: none;
+}
+
+.entity-detail__attr-key {
+  color: var(--text-dim);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.entity-detail__attr-value {
+  margin: 0;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--text);
+  text-align: right;
+  word-break: break-word;
+}
+
+.entity-detail__attr-empty {
+  margin: 0;
+  color: var(--text-faint);
+  font-size: 13px;
+}

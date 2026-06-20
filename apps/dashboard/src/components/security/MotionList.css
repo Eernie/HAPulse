@@ -1,0 +1,106 @@
+/* ===================================================
+   MotionList — list-style motion/presence sensors
+   =================================================== */
+.motion-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.motion-list__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5625rem 0;
+  border-bottom: 1px solid var(--line);
+  min-height: 48px;
+}
+
+.motion-list__row:last-child { border-bottom: none; padding-bottom: 0; }
+.motion-list__row:first-child { padding-top: 0; }
+
+/* Icon */
+.motion-list__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+  flex-shrink: 0;
+  transition: background 140ms ease-out, color 140ms ease-out;
+}
+
+.motion-list__icon--active    { background: var(--warning-soft); color: var(--warning); }
+.motion-list__icon--danger    { background: var(--danger-soft);  color: var(--danger); }
+
+/* Name column */
+.motion-list__name-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.motion-list__name {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.motion-list__room {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+/* Right side */
+.motion-list__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+
+/* State pill */
+.motion-list__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1875rem 0.5625rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.motion-list__pill--active  { background: var(--warning-soft); color: var(--warning); }
+.motion-list__pill--danger  { background: var(--danger-soft);  color: var(--danger); }
+.motion-list__pill--clear   { background: var(--bg-subtle);    color: var(--text-faint); }
+
+.motion-list__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: motion-dot-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes motion-dot-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Time */
+.motion-list__time {
+  font-family: var(--font-data);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+}

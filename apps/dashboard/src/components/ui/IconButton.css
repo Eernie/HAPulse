@@ -1,0 +1,48 @@
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background 180ms ease-out, transform 180ms ease-out;
+  flex-shrink: 0;
+}
+
+.icon-btn:active {
+  transform: scale(0.96);
+}
+
+.icon-btn--default {
+  background: var(--bg-raised);
+  color: var(--text-dim);
+}
+
+.icon-btn--default:hover {
+  background: var(--bg-card-hover);
+  color: var(--text);
+}
+
+.icon-btn--accent {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.icon-btn--accent:hover {
+  opacity: 0.9;
+}
+
+.icon-btn--ghost {
+  background: transparent;
+  color: var(--text-faint);
+}
+
+.icon-btn--ghost:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

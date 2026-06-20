@@ -1,0 +1,86 @@
+/* =============================================================
+   CameraGrid — Daylight v2 restyle
+   ============================================================= */
+
+.camera-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.875rem;
+}
+
+@media (max-width: 480px) {
+  .camera-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Camera tile */
+.camera-tile {
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.camera-tile__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+
+.camera-tile__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.camera-tile__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+}
+
+/* Motion badge — uses danger per spec */
+.camera-tile__motion-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.1875rem 0.5rem;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: 6px;
+}
+
+.camera-tile__footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  border-top: 1px solid var(--line);
+}
+
+.camera-tile__name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.camera-tile__room {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  flex-shrink: 0;
+}

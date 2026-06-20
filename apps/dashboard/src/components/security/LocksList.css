@@ -1,0 +1,148 @@
+/* =============================================================
+   LocksList — Daylight v2 restyle
+   ============================================================= */
+
+.locks-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.locks-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1.125rem;
+  border-bottom: 1px solid var(--line);
+  min-height: 60px;
+  transition: background 160ms ease-out;
+}
+
+.locks-row:last-child {
+  border-bottom: none;
+}
+
+.locks-row:hover {
+  background: var(--bg-card-hover);
+}
+
+/* Icon chip — 36×36 rounded-square */
+.locks-row__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  transition: background 160ms ease-out, color 160ms ease-out;
+}
+
+.locks-row__icon--locked {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+
+.locks-row__icon--unlocked {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+/* Name column */
+.locks-row__name-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.locks-row__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.locks-row__room {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+/* State badge — pill */
+.locks-row__state {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.locks-row__state--locked {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+
+.locks-row__state--unlocked {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+/* Action buttons */
+.locks-row__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.locks-row__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 34px;
+  background: var(--bg-subtle);
+  color: var(--text-dim);
+  transition: background 160ms ease-out, color 160ms ease-out,
+              border-color 160ms ease-out, transform 160ms ease-out;
+}
+
+.locks-row__btn:active {
+  transform: scale(0.97);
+}
+
+.locks-row__btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.locks-row__btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.locks-row__btn--lock:not(:disabled):hover {
+  background: var(--positive-soft);
+  color: var(--positive);
+  border-color: color-mix(in srgb, var(--positive) 30%, transparent);
+}
+
+.locks-row__btn--unlock:not(:disabled):hover {
+  background: var(--warning-soft);
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+}

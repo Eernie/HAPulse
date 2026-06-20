@@ -1,0 +1,249 @@
+/* HeroRoomCard — large hero room card */
+.hero-room-card {
+  position: relative;
+  overflow: hidden;
+  padding: 1.375rem 1.375rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 200px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.hero-room-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.hero-room-card:active {
+  transform: scale(0.99);
+}
+
+/* Gradient BG layer */
+.hero-room-card__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--hero-gradient);
+  pointer-events: none;
+  border-radius: var(--radius-card);
+}
+
+.hero-room-card__top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.hero-room-card__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 3vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.15;
+}
+
+.hero-room-card__sub {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  margin-top: 0.1875rem;
+}
+
+/* Glance chips — top right */
+.hero-room-card__glance {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3125rem;
+  flex-shrink: 0;
+}
+
+.hero-room-card__glance-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.25rem 0.5625rem;
+  border-radius: var(--radius-pill);
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--line);
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+}
+
+/* Control pills row */
+.hero-room-card__pills {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Shared pill base */
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.875rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  cursor: pointer;
+  min-height: 36px;
+  transition: background 160ms ease-out, color 160ms ease-out, transform 160ms ease-out;
+}
+
+.hero-pill:hover {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.hero-pill:active {
+  transform: scale(0.96);
+}
+
+/* Lights pill — accent when on */
+.hero-pill--lights-on {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: transparent;
+  box-shadow: 0 0 0 1px var(--accent-soft), 0 4px 12px -4px rgba(242, 148, 28, 0.35);
+}
+
+.hero-pill--lights-on:hover {
+  background: var(--accent);
+  filter: brightness(1.05);
+}
+
+/* State label on lights pill */
+.hero-pill__state {
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+/* Climate pill — info blue */
+.hero-pill--climate {
+  color: var(--info);
+  background: var(--info-soft);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Media pill — info */
+.hero-pill--media {
+  color: var(--info);
+  background: var(--info-soft);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Nav chevron pill */
+.hero-pill--nav {
+  padding: 0.4375rem 0.5rem;
+  min-width: 36px;
+  justify-content: center;
+  margin-left: auto;
+}
+
+/* Climate stepper inside pill */
+.hero-pill__stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  margin-left: 0.25rem;
+}
+
+.hero-pill__step-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.15);
+  border: none;
+  cursor: pointer;
+  color: var(--info);
+  transition: background 160ms ease-out;
+}
+
+.hero-pill__step-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.hero-pill__step-btn:active {
+  transform: scale(0.92);
+}
+
+.hero-room-card--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  padding: 2rem;
+}
+
+.hero-room-card__empty-text {
+  color: var(--text-faint);
+  font-size: 0.9375rem;
+}
+
+/* Dark mode: frosted pills use dark-tinted bg */
+:root[data-mode='dark'] .hero-pill {
+  background: rgba(30, 33, 40, 0.72);
+  color: var(--text-dim);
+}
+
+:root[data-mode='dark'] .hero-pill:hover {
+  background: rgba(40, 44, 54, 0.88);
+}
+
+:root[data-mode='dark'] .hero-pill--lights-on {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* --- Area photo background (with gradient fallback handled in TSX) --- */
+.hero-room-card__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.hero-room-card__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    105deg,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.32) 45%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+}
+/* Over a photo, content must read light regardless of theme/mode. */
+.hero-room-card--photo .hero-room-card__name { color: #fff; }
+.hero-room-card--photo .hero-room-card__sub { color: rgba(255, 255, 255, 0.82); }
+.hero-room-card--photo .hero-room-card__glance-chip {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  border-color: rgba(255, 255, 255, 0.22);
+}

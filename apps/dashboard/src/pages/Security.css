@@ -1,0 +1,21 @@
+/* ===================================================
+   Security page
+   =================================================== */
+.security-page {
+  padding-bottom: 2.5rem;
+}
+
+/* Camera section — no Card wrapper; CameraGrid renders its own tiles */
+.security-page__camera-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.security-page__camera-grid .camera-grid {
+  display: grid;
+  /* auto-fit (not auto-fill) so cameras stretch to fill the section width as it's
+     resized — a single camera spans full width, four become a responsive 2×2. */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.875rem;
+}

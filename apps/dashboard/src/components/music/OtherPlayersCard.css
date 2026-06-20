@@ -1,0 +1,204 @@
+/* ===================================================
+   OtherPlayersCard
+   =================================================== */
+.other-players-card {
+  padding: 1rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+/* Header */
+.other-players-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.other-players-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4375rem;
+}
+
+.other-players-card__icon-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--info-soft);
+  color: var(--info);
+  flex-shrink: 0;
+}
+
+.other-players-card__title {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.other-players-card__count {
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.other-players-card__empty {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--text-faint);
+  padding: 0.25rem 0;
+}
+
+/* Scrollable list */
+.other-players-card__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.other-players-card__list::-webkit-scrollbar { width: 4px; }
+.other-players-card__list::-webkit-scrollbar-track { background: transparent; }
+.other-players-card__list::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 2px;
+}
+
+/* Player row */
+.other-player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.375rem;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background 140ms ease-out;
+  min-height: 44px;
+}
+
+.other-player-row:hover {
+  background: var(--bg-subtle);
+}
+
+.other-player-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.other-player-row--selected {
+  background: var(--accent-soft);
+}
+
+.other-player-row--selected:hover {
+  background: var(--accent-soft);
+}
+
+/* Art thumbnail */
+.other-player-row__art {
+  position: relative;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-subtle);
+}
+
+.other-player-row__art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.other-player-row__art-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent-soft) 0%, var(--bg-subtle) 100%);
+  color: var(--text-faint);
+}
+
+.other-player-row__playing-dot {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--positive);
+  border: 1.5px solid var(--bg-card);
+}
+
+/* Info */
+.other-player-row__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.other-player-row__name {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.other-player-row__state {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+/* Play/Pause button */
+.other-player-row__pp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 140ms ease-out, color 140ms ease-out;
+}
+
+.other-player-row__pp:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.other-player-row__pp:active {
+  transform: scale(0.92);
+}

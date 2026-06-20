@@ -1,0 +1,164 @@
+/* RoomsQuickAccess — horizontal room summary card grid */
+
+.rooms-quick-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+/*
+ * Grid: auto-fill so cards wrap naturally.
+ * 240px minimum gives enough room for the horizontal layout.
+ */
+.rooms-quick-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+
+.rooms-quick-tile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem;
+  border-radius: var(--radius-card);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  text-align: left;
+  min-width: 0;
+  transition:
+    background 160ms ease-out,
+    transform 160ms ease-out,
+    box-shadow 160ms ease-out,
+    border-color 160ms ease-out;
+}
+
+.rooms-quick-tile:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.rooms-quick-tile:active {
+  transform: scale(0.97);
+}
+
+.rooms-quick-tile--active {
+  box-shadow: var(--shadow-active);
+}
+
+/* ── Icon box ────────────────────────────────────────────── */
+
+.rooms-quick-tile__icon-box {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 160ms ease-out;
+}
+
+.rooms-quick-tile__icon-box--active {
+  background: var(--accent-soft);
+}
+
+.rooms-quick-tile__icon-box--status {
+  background: var(--danger-soft);
+}
+
+.rooms-quick-tile__icon {
+  color: var(--text-faint);
+  transition: color 160ms ease-out;
+}
+
+.rooms-quick-tile--active .rooms-quick-tile__icon {
+  color: var(--accent);
+}
+
+.rooms-quick-tile--status .rooms-quick-tile__icon {
+  color: var(--danger);
+}
+
+/* ── Body ────────────────────────────────────────────────── */
+
+.rooms-quick-tile__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
+}
+
+.rooms-quick-tile__name {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+/* ── Stats row ───────────────────────────────────────────── */
+
+.rooms-quick-tile__stats {
+  display: flex;
+  flex-direction: row;
+  gap: 0.875rem;
+}
+
+.rooms-quick-tile__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.rooms-quick-tile__stat-value {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.rooms-quick-tile__stat-value--temp {
+  color: var(--danger);
+}
+
+.rooms-quick-tile__stat-value--humidity {
+  color: var(--info);
+}
+
+.rooms-quick-tile__stat-value--lit {
+  color: var(--accent);
+}
+
+.rooms-quick-tile__stat-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  line-height: 1;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+
+@media (max-width: 559px) {
+  .rooms-quick-strip {
+    grid-template-columns: 1fr;
+  }
+}

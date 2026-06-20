@@ -1,0 +1,181 @@
+/* =============================================================
+   PlayerTile — Compact media player tile  (Daylight v2)
+   ============================================================= */
+
+.player-tile {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background 160ms ease-out, box-shadow 160ms ease-out, transform 160ms ease-out;
+  min-height: 44px;
+}
+
+.player-tile:hover {
+  /* Card base already covers bg-card-hover; add a slight lift */
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.player-tile:active {
+  transform: scale(0.99) translateY(0);
+}
+
+.player-tile:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Selected = accent border tint */
+.player-tile--selected {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-active);
+}
+
+/* ── Artwork thumb ────────────────────────────────────────── */
+.player-tile__artwork {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-control);
+  overflow: hidden;
+  background: var(--bg-subtle);
+}
+
+.player-tile__artwork-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.player-tile__artwork-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--accent-soft) 0%,
+    var(--bg-subtle) 100%
+  );
+  color: var(--text-faint);
+}
+
+/* ── Body ─────────────────────────────────────────────────── */
+.player-tile__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.player-tile__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.player-tile__name-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-tile__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.player-tile__room {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin-top: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Inline play/pause — accent chip */
+.player-tile__playpause {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border: none;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 160ms ease-out, color 160ms ease-out, transform 160ms ease-out;
+}
+
+.player-tile__playpause:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.player-tile__playpause:active {
+  transform: scale(0.94);
+}
+
+.player-tile__playpause:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* State / title line */
+.player-tile__state {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+}
+
+/* ── Volume row ───────────────────────────────────────────── */
+.player-tile__volume-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.125rem;
+}
+
+.player-tile__vol-icon {
+  color: var(--text-faint);
+  flex-shrink: 0;
+}
+
+.player-tile__volume {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--accent) var(--progress-pct, 0%),
+    var(--border) var(--progress-pct, 0%)
+  );
+}
+
+/* ── Reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .player-tile,
+  .player-tile__playpause {
+    transition: none;
+  }
+
+  .player-tile:hover {
+    transform: none;
+  }
+}

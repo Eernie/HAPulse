@@ -1,0 +1,57 @@
+/**
+ * FavoritesStrip — renders FavoriteTile for each favorited entity that is
+ * currently relevant (passes isFavoriteRelevant). Weather is handled separately
+ * in the WeatherHero left block, so this strip shows only NON-weather favorites.
+ *
+ * Renders nothing (null) when there are zero relevant favorites.
+ */
+
+import React, { useState } from 'react';
+import { isFavoriteRelevant, domainOf } from '@hapulse/core';
+import type { HassEntityMap } from '@hapulse/core';
+import type { CustomizationSettings } from '../../stores/settingsStore';
+import { FavoriteTile } from './FavoriteTile';
+import { EntityDetailModal } from './EntityDetailModal';
+import './favorites.css';
+
+interface FavoritesStripProps {
+  /** Full entity map from entityStore */
+  entities: HassEntityMap;
+  /** Customization settings — favorites list + entityOverrides */
+  customization: Pick<CustomizationSettings, 'favorites' | 'entityOverrides'>;
+}
+
+export function FavoritesStrip({ entities, customization }: FavoritesStripProps) {
+  const { favorites } = customization;
+  const [detailId, setDetailId] = useState<string | null>(null);
+
+  // Filter: entity must exist, not be a weather entity (shown in hero left), and be relevant
+  const relevantIds = favorites.filter((id) => {
+    const entity = entities[id];
+    if (!entity) return false;
+    if (domainOf(id) === 'weather') return false; // weather stays in the permanent left block
+    return isFavoriteRelevant(entity);
+  });
+
+  if (relevantIds.length === 0) return null;
+
+  return (
+    <>
+      <div className="favorites-strip" role="list" aria-label="Favorite entities">
+        {relevantIds.map((id) => {
+          const entity = entities[id]!;
+          return (
+            <div key={id} role="listitem">
+              <FavoriteTile
+                entity={entity}
+                customization={customization}
+                onOpenDetail={setDetailId}
+              />
+            </div>
+          );
+        })}
+      </div>
+      <EntityDetailModal entityId={detailId} onClose={() => setDetailId(null)} />
+    </>
+  );
+}

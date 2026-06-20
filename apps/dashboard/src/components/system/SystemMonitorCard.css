@@ -1,0 +1,123 @@
+/* ===================================================
+   SystemMonitorCard
+   =================================================== */
+.sys-monitor-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sys-monitor-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.sys-monitor-card__icon-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--info-soft);
+  color: var(--info);
+  flex-shrink: 0;
+}
+
+.sys-monitor-card__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+/* Group list */
+.sys-monitor-card__groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.sys-monitor-group__label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  margin-bottom: 0.5rem;
+}
+
+/* Tile grid inside a group */
+.sys-monitor-group__tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+/* Individual metric tile */
+.sys-metric-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-card);
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--line);
+}
+
+.sys-metric-tile__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sys-metric-tile__name {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+  text-transform: capitalize;
+}
+
+.sys-metric-tile__value {
+  font-family: var(--font-data);
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+/* Mini progress bar */
+.sys-metric-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.sys-metric-bar__fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 600ms ease-out;
+}
+
+.sys-metric-bar__fill--ok       { background: var(--positive); }
+.sys-metric-bar__fill--warn     { background: var(--warning); }
+.sys-metric-bar__fill--critical { background: var(--danger); }

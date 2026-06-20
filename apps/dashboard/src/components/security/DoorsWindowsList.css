@@ -1,0 +1,109 @@
+/* =============================================================
+   DoorsWindowsList — Daylight v2 restyle
+   ============================================================= */
+
+.doors-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.doors-list__row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1.125rem;
+  border-bottom: 1px solid var(--line);
+  transition: background 160ms ease-out;
+  min-height: 60px;
+}
+
+.doors-list__row:last-child {
+  border-bottom: none;
+}
+
+.doors-list__row:hover {
+  background: var(--bg-card-hover);
+}
+
+/* Icon chip — 36×36 rounded-square */
+.doors-list__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  transition: background 160ms ease-out, color 160ms ease-out;
+}
+
+.doors-list__icon--open {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.doors-list__icon--closed {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+
+/* Name column */
+.doors-list__name-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.doors-list__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doors-list__room {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+/* State pill */
+.doors-list__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.doors-list__pill--open {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.doors-list__pill--closed {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+
+/* Glow dot for open state */
+.doors-list__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}

@@ -1,0 +1,70 @@
+/* =============================================================
+   UserAvatar — 44px circle showing the signed-in HA user
+   ============================================================= */
+
+.user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  /* Non-interactive by default; overridden by --interactive modifier */
+  cursor: default;
+  background: var(--accent-soft);
+  transition: box-shadow 180ms ease-out;
+}
+
+/* Interactive (button) variant — navigates to settings */
+.user-avatar--interactive {
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  font: inherit;
+  /* Reset button styles */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.user-avatar--interactive:hover {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.user-avatar--interactive:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.user-avatar--interactive:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-avatar--interactive:active {
+    transform: none;
+  }
+}
+
+/* Avatar image */
+.user-avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Initial letter fallback */
+.user-avatar__initial {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1;
+  user-select: none;
+  letter-spacing: -0.01em;
+}

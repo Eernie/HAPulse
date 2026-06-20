@@ -1,0 +1,223 @@
+/* ===================================================
+   SecurityHeroCard — gradient hero summary
+   =================================================== */
+.security-hero-card {
+  padding: 1.25rem 1.375rem 1.125rem;
+  min-height: 180px;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  transition: background 400ms ease-out;
+  /* Translucent gradient over the card background-color, so the base .card:hover
+     lightening still shows through (matches Scenes/Automations hero hover). */
+  background-image: var(--hero-grad);
+}
+
+.card.security-hero-card:hover {
+  background-color: var(--bg-card-hover);
+  background-image: var(--hero-grad);
+}
+
+/* Gradient variants based on alarm state */
+.security-hero-card--disarmed {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--text) 7%, transparent) 0%, transparent 55%, color-mix(in srgb, var(--text) 7%, transparent) 100%);
+}
+
+.security-hero-card--armed-home {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--positive) 15%, transparent) 0%, transparent 55%, color-mix(in srgb, var(--positive) 15%, transparent) 100%);
+}
+
+.security-hero-card--armed-night {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--info) 15%, transparent) 0%, transparent 55%, color-mix(in srgb, var(--info) 15%, transparent) 100%);
+}
+
+.security-hero-card--armed-away {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--danger) 16%, transparent) 0%, transparent 55%, color-mix(in srgb, var(--danger) 16%, transparent) 100%);
+}
+
+.security-hero-card--triggered {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--danger) 20%, transparent) 0%, transparent 40%, color-mix(in srgb, var(--danger) 20%, transparent) 100%);
+}
+
+/* Inner layout */
+.security-hero-card__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  height: 100%;
+}
+
+/* Alarm state row */
+.security-hero-card__alarm {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+
+.security-hero-card__alarm-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  flex-shrink: 0;
+}
+
+.security-hero-card--disarmed .security-hero-card__alarm-icon { color: var(--text-faint); }
+.security-hero-card--armed-home .security-hero-card__alarm-icon { color: var(--positive); }
+.security-hero-card--armed-night .security-hero-card__alarm-icon { color: var(--info); }
+.security-hero-card--armed-away .security-hero-card__alarm-icon { color: var(--danger); }
+.security-hero-card--triggered .security-hero-card__alarm-icon {
+  color: var(--danger);
+  animation: alarm-pulse 1s ease-in-out infinite;
+}
+
+@keyframes alarm-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.security-hero-card__alarm-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.security-hero-card__alarm-name {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  margin: 0 0 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.security-hero-card__alarm-state {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  text-transform: capitalize;
+  line-height: 1.2;
+}
+
+/* People avatars */
+.security-hero-card__people {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.security-hero-avatar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.security-hero-avatar__img,
+.security-hero-avatar__fallback {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.security-hero-avatar--home .security-hero-avatar__fallback {
+  background: var(--positive-soft);
+  color: var(--positive);
+  border: 2px solid var(--positive);
+}
+
+.security-hero-avatar--away .security-hero-avatar__fallback {
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+  border: 2px solid var(--line);
+  opacity: 0.6;
+}
+
+.security-hero-avatar--home .security-hero-avatar__img {
+  border: 2px solid var(--positive);
+}
+
+.security-hero-avatar--away .security-hero-avatar__img {
+  border: 2px solid var(--line);
+  opacity: 0.6;
+}
+
+.security-hero-avatar__dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--positive);
+  border: 2px solid var(--bg-card);
+}
+
+.security-hero-card__people-label {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-left: 0.25rem;
+}
+
+/* Status chips */
+.security-hero-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4375rem;
+}
+
+.security-hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.3125rem 0.625rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.security-hero-chip--ok {
+  background: var(--positive-soft);
+  color: var(--positive);
+  border-color: color-mix(in srgb, var(--positive) 20%, transparent);
+}
+
+.security-hero-chip--danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+.security-hero-chip--warn {
+  background: var(--warning-soft);
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 20%, transparent);
+}
+
+.security-hero-chip--muted {
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+  border-color: var(--line);
+}

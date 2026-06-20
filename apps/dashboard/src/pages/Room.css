@@ -1,0 +1,194 @@
+/* =========================================================
+   Room page — Daylight v2
+   ========================================================= */
+
+.room-page {
+  padding-bottom: 2.5rem;
+}
+
+/* ── Mobile-only top bar (back + edit toggle) ───────────── */
+/* Hidden on desktop where AppLayout's header cluster handles these */
+.room-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.room-page__edit-toggle {
+  flex-shrink: 0;
+}
+
+@media (min-width: 900px) {
+  .room-page__header {
+    display: none;
+  }
+}
+
+/* ── Hero card ──────────────────────────────────────────── */
+.room-page .hero-room-card {
+  margin-bottom: 0.25rem;
+}
+
+/* ── Sections ───────────────────────────────────────────── */
+.room-page__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.room-page__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+
+.room-page__section--dragging {
+  opacity: 0.6;
+}
+
+/* Section label row (with grip in edit mode) */
+.room-section__label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.room-section__grip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  cursor: grab;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 160ms ease-out, color 160ms ease-out;
+}
+
+.room-section__grip:hover {
+  background: var(--bg-subtle);
+  color: var(--text-dim);
+}
+
+.room-section__grip:active {
+  cursor: grabbing;
+}
+
+/* Standard entity card grid */
+.room-page__card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+/* Wider grid for cards that need more breathing room (climate, vacuum) */
+.room-page__wide-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.75rem;
+}
+
+/* Scene grid — tiles break naturally based on available width */
+.room-page__scene-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.625rem;
+}
+
+/* Compact scene tile variant */
+.scene-tile--compact {
+  min-height: 72px;
+  padding: 0.625rem 0.5rem;
+  gap: 0.375rem;
+}
+
+.scene-tile--compact .scene-tile__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+}
+
+.scene-tile--compact .scene-tile__name {
+  font-size: 0.75rem;
+}
+
+/* Sensor tile grid — denser */
+.room-page__sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.625rem;
+}
+
+/* Let grid items shrink below their content's min-size so a long entity name
+   can't widen its card past the column (which caused right-edge overflow). */
+.room-page__card-grid > *,
+.room-page__wide-card-grid > *,
+.room-page__sensor-grid > *,
+.room-page__scene-grid > * {
+  min-width: 0;
+}
+
+/* Hidden scene tile in edit mode */
+.scene-tile--hidden {
+  opacity: 0.4;
+}
+
+/* ── Not-found / empty states ──────────────────────────── */
+.room-page__not-found {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 2rem 0;
+}
+
+.room-page__not-found-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.room-page__not-found-link {
+  color: var(--accent);
+  font-size: 0.9375rem;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  padding: 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.room-page__not-found-link:hover {
+  opacity: 0.8;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .room-page__card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* The wide grid's 300px min track overflows very narrow phones — go single-col. */
+  .room-page__wide-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .room-page__sensor-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
+
+  .room-page__scene-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
+}

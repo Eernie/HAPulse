@@ -1,0 +1,79 @@
+/* ===================================================
+   SensorSectionCard — generic wrapper for sensor lists
+   =================================================== */
+.sensor-section-card {
+  padding: 1rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.sensor-section-card__header {
+  flex-shrink: 0;
+}
+
+.sensor-section-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4375rem;
+}
+
+.sensor-section-card__icon-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  flex-shrink: 0;
+}
+
+.sensor-section-card__icon-chip--ok {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+
+.sensor-section-card__icon-chip--danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.sensor-section-card__icon-chip--warn {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.sensor-section-card__icon-chip--muted {
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+}
+
+.sensor-section-card__title {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sensor-section-card__count {
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+  margin-left: auto;
+}
+
+.sensor-section-card__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.sensor-section-card__body::-webkit-scrollbar { width: 4px; }
+.sensor-section-card__body::-webkit-scrollbar-track { background: transparent; }
+.sensor-section-card__body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }

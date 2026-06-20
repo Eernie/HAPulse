@@ -1,0 +1,174 @@
+/* =========================================================
+   RoomsMenu popover
+   ========================================================= */
+
+/* ---- shared base ---- */
+.rooms-menu {
+  /* Hidden by default — toggled to --open */
+  display: none;
+  pointer-events: none;
+}
+
+.rooms-menu--open {
+  display: block;
+  pointer-events: auto;
+}
+
+/* ---- inner card surface ---- */
+.rooms-menu__inner {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 24px -8px rgba(0, 0, 0, 0.32),
+    0 1px 4px -1px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  max-height: min(480px, calc(100vh - 160px));
+  overflow-y: auto;
+  /* Thin scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+/* ---- row ---- */
+.rooms-menu__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-align: left;
+  min-height: 44px;
+  transition: background 150ms ease-out, color 150ms ease-out;
+}
+
+.rooms-menu__row:hover {
+  background: var(--bg-card-hover);
+  color: var(--accent);
+}
+
+.rooms-menu__row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.rooms-menu__row + .rooms-menu__row {
+  border-top: 1px solid var(--line);
+}
+
+.rooms-menu__row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rooms-menu__row-chevron {
+  flex-shrink: 0;
+  color: var(--text-faint);
+  transition: color 150ms ease-out;
+}
+
+.rooms-menu__row:hover .rooms-menu__row-chevron {
+  color: var(--accent);
+}
+
+/* ---- empty state ---- */
+.rooms-menu__empty {
+  padding: 1rem 1rem;
+  color: var(--text-dim);
+  font-size: 0.8125rem;
+  margin: 0;
+  text-align: center;
+}
+
+/* =========================================================
+   Desktop positioning  (≥900px)
+   Popover sits to the RIGHT of the 72px rail.
+   The wrapper is position:fixed on the rail's z-index layer.
+   ========================================================= */
+@media (min-width: 900px) {
+  .rooms-menu {
+    position: fixed;
+    /* left edge = rail width + 8px gap */
+    left: calc(72px + 8px);
+    /* width of the card */
+    width: 240px;
+    z-index: 300;
+    /* Vertical position is set via --rooms-menu-top custom property
+       written inline by the JS trigger button */
+    top: var(--rooms-menu-top, 50%);
+  }
+
+  /* Entrance: fade + slide right */
+  .rooms-menu__inner {
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      opacity 160ms ease-out,
+      transform 160ms ease-out;
+  }
+
+  .rooms-menu--open .rooms-menu__inner {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* =========================================================
+   Mobile positioning  (<900px)
+   Bottom-sheet that slides up above the 64px tab bar.
+   Full-width with side gutters.
+   ========================================================= */
+@media (max-width: 899px) {
+  .rooms-menu {
+    position: fixed;
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    left: 8px;
+    right: 8px;
+    z-index: 300;
+    /* No inline top needed — anchored to bottom */
+  }
+
+  .rooms-menu__inner {
+    border-radius: 16px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 160ms ease-out,
+      transform 160ms ease-out;
+  }
+
+  .rooms-menu--open .rooms-menu__inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .rooms-menu__inner {
+    transition: none !important;
+  }
+}
+
+/* Room identity icon in each menu row */
+.rooms-menu__row-icon {
+  flex-shrink: 0;
+  color: var(--text-dim);
+  transition: color 150ms ease-out;
+}
+.rooms-menu__row:hover .rooms-menu__row-icon {
+  color: var(--accent);
+}

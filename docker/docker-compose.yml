@@ -1,0 +1,10 @@
+services:
+  hapulse:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: hapulse:latest
+    ports:
+      # 7421 avoids collision with Home Assistant's default port 8123
+      - "7421:80"
+    restart: unless-stopped

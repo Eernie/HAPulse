@@ -1,0 +1,248 @@
+/* ====================================================
+   WeatherModal — detailed weather view
+   ==================================================== */
+
+/* ---- Entity picker (edit mode only) ---- */
+.weather-modal__picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.weather-modal__picker-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.weather-modal__picker-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.weather-modal__picker-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 0.4375rem 1.875rem 0.4375rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--text);
+  cursor: pointer;
+  max-width: 14rem;
+}
+
+.weather-modal__picker-chevron {
+  position: absolute;
+  right: 0.625rem;
+  pointer-events: none;
+  color: var(--text-faint);
+}
+
+.weather-modal__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ---- Current conditions hero ---- */
+.weather-modal__hero {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  padding: 1.25rem 1.25rem 1.125rem;
+}
+
+.weather-modal__hero-wash {
+  position: absolute;
+  inset: 0;
+  background: var(--weather-gradient);
+  pointer-events: none;
+}
+
+.weather-modal__hero-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.weather-modal__hero-icon {
+  flex-shrink: 0;
+  color: var(--text-dim);
+  line-height: 1;
+}
+
+.weather-modal__hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.weather-modal__hero-temp {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin: 0;
+}
+
+.weather-modal__hero-condition {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-transform: capitalize;
+  margin: 0.25rem 0 0;
+}
+
+.weather-modal__hero-name {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin: 0.125rem 0 0;
+}
+
+/* ---- Stats grid ---- */
+.weather-modal__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.weather-modal__stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  min-width: 0;
+}
+
+.weather-modal__stat-icon {
+  flex-shrink: 0;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+}
+
+.weather-modal__stat-label {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weather-modal__stat-value {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---- Forecast ---- */
+.weather-modal__forecast {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.weather-modal__forecast-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin: 0;
+  padding: 0 0.25rem;
+}
+
+.weather-modal__forecast-list {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.weather-modal__forecast-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6875rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.weather-modal__forecast-row:last-child {
+  border-bottom: none;
+}
+
+.weather-modal__forecast-label {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text);
+  width: 4.5rem;
+  flex-shrink: 0;
+}
+
+.weather-modal__forecast-icon {
+  display: flex;
+  align-items: center;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.weather-modal__forecast-precip {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  color: var(--info);
+  width: 3.5rem;
+  flex-shrink: 0;
+}
+
+.weather-modal__forecast-precip--none {
+  width: 3.5rem;
+}
+
+.weather-modal__forecast-hi,
+.weather-modal__forecast-lo {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.weather-modal__forecast-hi {
+  color: var(--text);
+}
+
+.weather-modal__forecast-lo {
+  color: var(--text-faint);
+  margin-left: 0.5rem;
+}

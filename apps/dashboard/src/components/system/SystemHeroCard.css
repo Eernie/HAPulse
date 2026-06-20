@@ -1,0 +1,145 @@
+/* ===================================================
+   SystemHeroCard — gradient hero showing system health
+   =================================================== */
+.system-hero-card {
+  padding: 1.25rem 1.375rem 1.125rem;
+  min-height: 180px;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  transition: background 400ms ease-out;
+  /* Translucent gradient over the card background-color, so the base .card:hover
+     lightening still shows through (matches Scenes/Automations hero hover). */
+  background-image: var(--hero-grad);
+}
+
+.card.system-hero-card:hover {
+  background-color: var(--bg-card-hover);
+  background-image: var(--hero-grad);
+}
+
+.system-hero-card--healthy {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--positive) 15%, transparent) 0%, transparent 55%, color-mix(in srgb, var(--positive) 15%, transparent) 100%);
+}
+
+.system-hero-card--warning {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--warning) 16%, transparent) 0%, transparent 55%, color-mix(in srgb, var(--warning) 16%, transparent) 100%);
+}
+
+.system-hero-card--critical {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--danger) 18%, transparent) 0%, transparent 45%, color-mix(in srgb, var(--danger) 18%, transparent) 100%);
+}
+
+.system-hero-card--unknown {
+  --hero-grad: linear-gradient(135deg, color-mix(in srgb, var(--text) 7%, transparent) 0%, transparent 55%, color-mix(in srgb, var(--text) 7%, transparent) 100%);
+}
+
+.system-hero-card__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  height: 100%;
+}
+
+.system-hero-card__main {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.system-hero-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  flex-shrink: 0;
+}
+
+.system-hero-card--healthy  .system-hero-card__icon { color: var(--positive); }
+.system-hero-card--warning  .system-hero-card__icon { color: var(--warning); }
+.system-hero-card--critical .system-hero-card__icon {
+  color: var(--danger);
+  animation: system-hero-pulse 1.5s ease-in-out infinite;
+}
+.system-hero-card--unknown  .system-hero-card__icon { color: var(--text-faint); }
+
+@keyframes system-hero-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.system-hero-card__label {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  margin: 0 0 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.system-hero-card__status {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Metric chips row */
+.system-hero-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4375rem;
+}
+
+.system-hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.3125rem 0.625rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.system-hero-chip__key {
+  opacity: 0.75;
+}
+
+.system-hero-chip__val {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.system-hero-chip--ok {
+  background: var(--positive-soft);
+  color: var(--positive);
+  border-color: color-mix(in srgb, var(--positive) 20%, transparent);
+}
+
+.system-hero-chip--warn {
+  background: var(--warning-soft);
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 20%, transparent);
+}
+
+.system-hero-chip--critical {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+.system-hero-chip--muted {
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+  border-color: var(--line);
+}

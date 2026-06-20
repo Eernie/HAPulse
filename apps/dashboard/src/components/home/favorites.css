@@ -1,0 +1,127 @@
+/* =========================================================
+   Favorites Strip & Favorite Tile
+   ========================================================= */
+
+/* ---------- Favorites Strip ---------- */
+.favorites-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-content: flex-start;
+  /* Allow the strip to shrink but not overflow */
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ---------- Favorite Tile ---------- */
+/* The tile is now a <button> — reset browser button defaults first */
+.favorite-tile {
+  /* Button reset */
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+
+  /* Tile layout */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  min-height: 44px;
+  min-width: 72px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--line);
+  transition: background 180ms ease-out, box-shadow 180ms ease-out, transform 180ms ease-out;
+  user-select: none;
+}
+
+/* Press feedback — scale(.98) per DESIGN.md */
+.favorite-tile:active {
+  transform: scale(0.98);
+}
+
+/* Focus-visible ring — 2px solid accent, 2px offset per DESIGN.md a11y spec */
+.favorite-tile:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Hover lift for non-touch devices */
+@media (hover: hover) {
+  .favorite-tile:hover {
+    background: var(--bg-card-hover, rgba(0, 0, 0, 0.18));
+  }
+  .favorite-tile--active:hover {
+    background: var(--accent-soft);
+  }
+}
+
+/* Active/on state — accent tint */
+.favorite-tile--active {
+  background: var(--accent-soft);
+  border-color: rgba(232, 168, 75, 0.22);
+  box-shadow: 0 0 0 1px var(--accent-soft), 0 4px 16px -6px rgba(232, 168, 75, 0.2);
+}
+
+.favorite-tile__icon {
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color 180ms ease-out;
+}
+
+.favorite-tile--active .favorite-tile__icon {
+  color: var(--accent);
+}
+
+.favorite-tile__value {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.2;
+  /* Truncate if tile is very narrow */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.favorite-tile--active .favorite-tile__value {
+  color: var(--text);
+}
+
+.favorite-tile__name {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.2;
+}
+
+.favorite-tile--active .favorite-tile__name {
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .favorite-tile {
+    transition: none;
+  }
+  .favorite-tile:active {
+    transform: none;
+  }
+}

@@ -1,0 +1,14 @@
+/* Energy page */
+.energy-page {
+  padding-bottom: 2.5rem;
+}
+
+.energy-page__header {
+  margin-bottom: 0;
+}
+
+.energy-page__loading {
+  font-size: 0.9375rem;
+  color: var(--text-faint);
+  padding: 2rem 0;
+}

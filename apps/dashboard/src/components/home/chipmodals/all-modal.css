@@ -1,0 +1,23 @@
+/* ====================================================
+   Shared grid layout for ClimateAllModal / BlindsAllModal
+   ==================================================== */
+
+.all-modal__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* Widen the modal panel on desktop when it contains this grid */
+@media (min-width: 641px) {
+  .modal-backdrop:has(.all-modal__grid) .modal-panel {
+    max-width: 720px;
+  }
+}
+
+/* Single column on mobile (matches bottom-sheet breakpoint) */
+@media (max-width: 640px) {
+  .all-modal__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,17 @@
+/* =========================================================
+   Automations page
+   ========================================================= */
+.automations-page {
+  padding-bottom: 2.5rem;
+}
+
+.automations-page__header {
+  margin-bottom: 0;
+}
+
+.automations-empty-filter {
+  color: var(--text-dim);
+  font-size: 0.9375rem;
+  padding: 2rem 0;
+  text-align: center;
+}

@@ -1,0 +1,66 @@
+/* Shared page container styles */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.15;
+}
+
+/* =========================================================
+   Page title header row — title + optional EditToggle
+   Used on Music, Security, and any page with a top-level h1.
+   ========================================================= */
+.page__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* =========================================================
+   Edit-mode entity wrapper — provides positioning context
+   for EditBadge and dim-out on hidden items.
+   ========================================================= */
+.edit-entity-wrap {
+  position: relative;
+}
+
+.edit-entity-wrap--hidden {
+  opacity: 0.4;
+}
+
+/* Extra margin so badge overhang doesn't clip grid */
+.edit-entity-wrap--editing {
+  margin-top: 8px;
+  margin-right: 8px;
+}
+
+/* =========================================================
+   Mobile-only section hiding
+   A section flagged "hide on mobile" (via the EditBadge phone toggle) keeps
+   rendering on desktop but is removed from the layout at the app's mobile
+   breakpoint (<900px — where the shell switches to the bottom tab bar).
+   Applied only outside edit mode so the section stays togglable while editing.
+   ========================================================= */
+@media (max-width: 899px) {
+  .section-mobile-hidden,
+  .section-mobile-hidden-contents {
+    display: none !important;
+  }
+}
+
+/* Wrapper variant for flex/flow layouts (e.g. Music columns): generates no box
+   on desktop so the wrapped section behaves as a direct child, then collapses
+   to display:none at the mobile breakpoint above. */
+.section-mobile-hidden-contents {
+  display: contents;
+}

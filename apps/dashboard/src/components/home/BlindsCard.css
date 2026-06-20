@@ -1,0 +1,252 @@
+/* BlindsCard */
+.blinds-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.blinds-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.875rem;
+}
+
+.blinds-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.blinds-card__icon-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  /* default: off / neutral */
+  background: var(--bg-subtle);
+  color: var(--text-dim);
+  transition: background 300ms ease-out, color 300ms ease-out;
+}
+
+.blinds-card__icon-chip--open {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.blinds-card__icon-chip--partial {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.blinds-card__icon-chip--closed {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+.blinds-card__icon-chip--moving {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+
+.blinds-card__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.blinds-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  min-height: 44px;
+  font-family: var(--font-body);
+  transition: opacity 160ms ease-out;
+}
+
+.blinds-card__link:hover {
+  opacity: 0.8;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.blinds-card__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+.blinds-card__empty-icon {
+  color: var(--text-faint);
+  margin-bottom: 0.25rem;
+}
+
+.blinds-card__empty-text {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.blinds-card__empty-sub {
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+  max-width: 24ch;
+}
+
+/* ── Gauge + controls ────────────────────────────────────── */
+.blinds-card__gauge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.875rem;
+}
+
+.blinds-card__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Control buttons — colour driven by data-blind on the gauge-wrap */
+.blinds-card__ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background 200ms ease-out, transform 160ms ease-out, opacity 160ms ease-out;
+  /* default */
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+}
+
+.blinds-card__ctrl-btn--stop {
+  width: 32px;
+  height: 32px;
+}
+
+.blinds-card__ctrl-btn:hover {
+  opacity: 0.8;
+}
+
+.blinds-card__ctrl-btn:active {
+  transform: scale(0.92);
+}
+
+[data-blind="open"] .blinds-card__ctrl-btn {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+[data-blind="partial"] .blinds-card__ctrl-btn {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+[data-blind="closed"] .blinds-card__ctrl-btn {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+[data-blind="moving"] .blinds-card__ctrl-btn {
+  background: var(--positive-soft);
+  color: var(--positive);
+}
+
+/* ── Room list ───────────────────────────────────────────── */
+.blinds-card__rooms {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  /* Reduced to fit within the 400px card cap alongside the controls section */
+  max-height: 150px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.blinds-card__room-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.375rem;
+  border-bottom: 1px solid var(--line);
+  min-height: 44px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 140ms ease-out;
+  margin: 0 -0.375rem;
+}
+
+.blinds-card__room-row:last-child {
+  border-bottom: none;
+}
+
+.blinds-card__room-row:hover {
+  background: var(--bg-hover, var(--bg-subtle));
+}
+
+.blinds-card__room-row--selected {
+  background: var(--bg-subtle);
+}
+
+.blinds-card__room-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 300ms ease-out;
+}
+
+.blinds-card__room-name {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 140ms ease-out;
+}
+
+.blinds-card__room-row--selected .blinds-card__room-name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.blinds-card__room-pos {
+  font-family: var(--font-data);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text);
+  flex-shrink: 0;
+}

@@ -1,0 +1,701 @@
+/* =========================================================
+   AppLayout — Daylight v2 shell
+   ========================================================= */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* =========================================================
+   Desktop sidebar (≥900px)
+   ========================================================= */
+.app-sidebar {
+  /* Hidden on mobile — shown at ≥900px */
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .app-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+    min-height: 100vh;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    flex-shrink: 0;
+    background: var(--bg-raised);
+    border-right: 1px solid var(--border);
+    z-index: 100;
+    overflow: visible;
+    /* Smooth collapse transition */
+    transition:
+      width 180ms ease-out;
+  }
+
+  /* ---- Collapsed rail (72px icon-only) ---- */
+  .app-sidebar--collapsed {
+    width: 72px;
+  }
+}
+
+/* ---- Logo / wordmark header ---- */
+.app-sidebar__header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 1.25rem 1rem;
+  flex-shrink: 0;
+  /* Prevent wordmark from overflowing during collapse */
+  overflow: hidden;
+  min-height: 64px;
+}
+
+/* Collapsed: center the logo icon */
+.app-sidebar--collapsed .app-sidebar__header {
+  padding: 1.5rem 0 1rem;
+  justify-content: center;
+}
+
+/* ---- Nav list ---- */
+.sidebar-nav {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  /* SortableGrid renders a div wrapper; the ul lives inside */
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* The inner ul rendered by our map */
+.sidebar-nav__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  flex: 1;
+}
+
+/* Collapsed: center items, remove side padding so icons are centered */
+.app-sidebar--collapsed .sidebar-nav__list {
+  padding: 0.5rem 0;
+  align-items: center;
+}
+
+/* Each nav item — NavLink or button or div (edit mode) */
+.sidebar-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-control);
+  color: var(--text-dim);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 160ms ease-out,
+    color 160ms ease-out;
+  /* Button resets */
+  background: none;
+  border: none;
+  text-align: left;
+  min-height: 44px;
+}
+
+/* Collapsed: icon-only pill */
+.app-sidebar--collapsed .sidebar-nav__item {
+  width: 44px;
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+  border-radius: var(--radius-control);
+}
+
+.sidebar-nav__item:hover {
+  background: var(--bg-subtle);
+  color: var(--text);
+}
+
+.sidebar-nav__item--active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.sidebar-nav__item--active:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Edit-mode: no hover navigation effect */
+.sidebar-nav__item--edit {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Hidden item in edit mode: dimmed */
+.sidebar-nav__item--dimmed {
+  opacity: 0.4;
+}
+
+.sidebar-nav__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar-nav__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Fade label out when collapsing */
+  transition: opacity 140ms ease-out, width 180ms ease-out;
+}
+
+/* Hide label text when collapsed */
+.app-sidebar--collapsed .sidebar-nav__label {
+  display: none;
+}
+
+/* ---- Item wrapper for edit-mode badge positioning ---- */
+.sidebar-nav__item-wrapper {
+  position: relative;
+  /* Needed for EditBadge absolute positioning */
+}
+
+.sidebar-nav__item-wrapper--hidden .sidebar-nav__item {
+  opacity: 0.4;
+}
+
+/* ---- Sidebar footer — Home Status + collapse ---- */
+.app-sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 0.75rem 0.75rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  flex-shrink: 0;
+}
+
+.app-sidebar--collapsed .app-sidebar__footer {
+  align-items: center;
+  padding: 0.75rem 0 calc(1.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Home-Status pill */
+.home-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-control);
+  min-height: 44px;
+  overflow: hidden;
+  transition: padding 180ms ease-out, background 200ms ease-out;
+  /* Link resets */
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.home-status-pill:hover {
+  background: var(--bg-raised);
+}
+
+/* Collapsed: icon-only pill */
+.app-sidebar--collapsed .home-status-pill {
+  width: 44px;
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+}
+
+/* Health-state icon colors */
+.home-status-pill__icon {
+  flex-shrink: 0;
+}
+
+.home-status-pill--healthy  .home-status-pill__icon { color: var(--positive); }
+.home-status-pill--warning  .home-status-pill__icon { color: var(--warning); }
+.home-status-pill--critical .home-status-pill__icon { color: var(--danger); }
+.home-status-pill--unknown  .home-status-pill__icon { color: var(--text-faint); }
+
+.home-status-pill__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  transition: opacity 140ms ease-out;
+}
+
+/* Hide pill text when collapsed */
+.app-sidebar--collapsed .home-status-pill__text {
+  display: none;
+}
+
+.home-status-pill__title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home-status-pill__sub {
+  font-size: 0.6875rem;
+  color: var(--text-faint);
+  line-height: 1.2;
+}
+
+/* Collapse chevron button — functional + keyboard accessible */
+.app-sidebar__collapse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 8px;
+  color: var(--text-faint);
+  transition: color 160ms ease-out, background 160ms ease-out;
+  flex-shrink: 0;
+}
+
+.app-sidebar--collapsed .app-sidebar__collapse {
+  align-self: center;
+}
+
+.app-sidebar__collapse:hover {
+  color: var(--text-dim);
+  background: var(--bg-subtle);
+}
+
+.app-sidebar__collapse:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  color: var(--text-dim);
+}
+
+/* =========================================================
+   RoomsMenu desktop offset — uses --sidebar-width CSS var
+   ========================================================= */
+@media (min-width: 900px) {
+  .rooms-menu {
+    left: calc(var(--sidebar-width, 240px) + 8px) !important;
+    transition: left 180ms ease-out;
+  }
+}
+
+/* =========================================================
+   Content area
+   ========================================================= */
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* =========================================================
+   Floating header row (desktop only)
+   ========================================================= */
+.app-header-cluster-wrapper {
+  display: none;
+}
+
+/* =========================================================
+   Mobile summary chips bar — <900px, non-home routes
+   (home renders its own chips bar inside the page)
+   ========================================================= */
+.app-chips-mobile {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .app-chips-mobile {
+    display: block;
+    padding: 1rem 1rem 0;
+  }
+
+  /* Horizontal scroll for the chips on narrow screens */
+  .app-chips-mobile .summary-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px; /* avoid clipping focus ring */
+  }
+
+  .app-chips-mobile .summary-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .app-chips-mobile .summary-chip-wrap {
+    flex-shrink: 0;
+  }
+
+  .app-chips-mobile .summary-chip,
+  .app-chips-mobile .summary-chip__count {
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 900px) {
+  .app-header-cluster-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem 0;
+    position: relative;
+    z-index: 10;
+    /* Full width so chips can take remaining space */
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/*
+  header-cluster-wrapper: chips fill left, weather+bell+avatar pin right.
+  Uses a nested flex wrapper to achieve [chips ... grow ...] [weather|bell|avatar].
+*/
+.header-cluster-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Chips area: grows to fill space left of the icon cluster */
+.header-cluster__chips {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  display: flex;
+  align-items: center;
+}
+
+.header-cluster__chips::-webkit-scrollbar {
+  display: none;
+}
+
+/* Right-pinned icon cluster */
+.header-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* When no chips are present (non-home route), cluster stays right-aligned */
+.header-cluster-wrapper:not(:has(.header-cluster__chips)) .header-cluster {
+  margin-left: auto;
+}
+
+.header-cluster__weather {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--text-dim);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  margin-right: 0.25rem;
+}
+
+.header-cluster__weather--btn {
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 160ms ease-out, color 160ms ease-out;
+}
+
+.header-cluster__weather--btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text);
+}
+
+.header-cluster__weather--btn:active {
+  transform: scale(0.97);
+}
+
+.header-cluster__weather-temp {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.header-cluster__weather-condition {
+  color: var(--text-dim);
+  text-transform: capitalize;
+}
+
+/* =========================================================
+   Main content
+   ========================================================= */
+.app-main {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 1rem calc(64px + env(safe-area-inset-bottom) + 1rem);
+}
+
+@media (min-width: 900px) {
+  .app-main {
+    padding: 1.5rem 2rem 2rem;
+  }
+}
+
+/* =========================================================
+   Connection status banner
+   ========================================================= */
+.app-banner {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+.app-banner--warning {
+  background: var(--warning);
+  color: var(--on-accent);
+}
+
+.app-banner--error {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* =========================================================
+   Mobile bottom tab bar (<900px)
+   ========================================================= */
+.app-tabs {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(64px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: color-mix(in srgb, var(--bg-raised) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  z-index: 200;
+  align-items: stretch;
+}
+
+@media (min-width: 900px) {
+  .app-tabs {
+    display: none;
+  }
+}
+
+.app-tabs__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 160ms ease-out;
+  min-height: 44px;
+  /* Button resets */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.app-tabs__item:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-tabs__item:active {
+    transform: none;
+  }
+}
+
+.app-tabs__item--active {
+  color: var(--accent);
+}
+
+.app-tabs__label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+/* =========================================================
+   More nav menu — mobile-only bottom-sheet above tab bar
+   ========================================================= */
+.app-more-menu {
+  display: none;
+  pointer-events: none;
+}
+
+.app-more-menu--open {
+  display: block;
+  pointer-events: auto;
+}
+
+@media (max-width: 899px) {
+  .app-more-menu {
+    position: fixed;
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    left: 8px;
+    right: 8px;
+    z-index: 300;
+  }
+
+  .app-more-menu__inner {
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow:
+      0 4px 24px -8px rgba(0, 0, 0, 0.32),
+      0 1px 4px -1px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    max-height: min(480px, calc(100vh - 160px));
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 160ms ease-out, transform 160ms ease-out;
+  }
+
+  .app-more-menu--open .app-more-menu__inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-more-menu__row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  min-height: 44px;
+  transition: background 150ms ease-out, color 150ms ease-out;
+}
+
+.app-more-menu__row + .app-more-menu__row {
+  border-top: 1px solid var(--line);
+}
+
+.app-more-menu__row:hover,
+.app-more-menu__row--active {
+  background: var(--bg-card-hover);
+  color: var(--accent);
+}
+
+.app-more-menu__row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.app-more-menu__row-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.app-more-menu__row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-more-menu__row-chevron {
+  flex-shrink: 0;
+  color: var(--text-faint);
+  transition: color 150ms ease-out;
+}
+
+.app-more-menu__row:hover .app-more-menu__row-chevron,
+.app-more-menu__row--active .app-more-menu__row-chevron {
+  color: var(--accent);
+}
+
+/* =========================================================
+   Focus-visible ring refinements
+   ========================================================= */
+.sidebar-nav__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.app-tabs__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+/* =========================================================
+   Reduced motion overrides
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .app-sidebar,
+  .sidebar-nav__item,
+  .sidebar-nav__label,
+  .home-status-pill,
+  .home-status-pill__text,
+  .app-sidebar__collapse,
+  .rooms-menu {
+    transition: none !important;
+  }
+}

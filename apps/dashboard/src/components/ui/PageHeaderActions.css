@@ -1,0 +1,23 @@
+/* Right-side cluster in a page header row: pushes itself (and the page's own
+   actions) to the right, with title/back on the left. */
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Bell + avatar — mobile only; desktop shows them in the shell header cluster. */
+.page-header-actions__mobile {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .page-header-actions__mobile {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+    flex-shrink: 0;
+  }
+}

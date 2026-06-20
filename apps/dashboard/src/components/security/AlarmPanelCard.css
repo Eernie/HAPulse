@@ -1,0 +1,347 @@
+/* ===================================================
+   AlarmPanelCard
+   =================================================== */
+.alarm-panel-card {
+  padding: 1.25rem 1.375rem 1.125rem;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.alarm-panel-card--triggered {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger-soft), var(--shadow-active);
+}
+
+.alarm-panel-card__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+/* State section */
+.alarm-panel-card__state-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.alarm-panel-card__state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  flex-shrink: 0;
+}
+
+.alarm-panel-card__state-icon--pulse {
+  animation: alarm-icon-pulse 1s ease-in-out infinite;
+}
+
+@keyframes alarm-icon-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.95); }
+}
+
+/* Color variants */
+.alarm-panel-card__state--disarmed { color: var(--text-faint); }
+.alarm-panel-card__state--home     { color: var(--positive); }
+.alarm-panel-card__state--night    { color: var(--info); }
+.alarm-panel-card__state--away     { color: var(--danger); }
+.alarm-panel-card__state--warning  { color: var(--warning); }
+.alarm-panel-card__state--triggered { color: var(--danger); }
+
+.alarm-panel-card__name {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-faint);
+  margin: 0 0 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.alarm-panel-card__state-label {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.alarm-panel-card__dots::after {
+  content: '...';
+  animation: dots 1.4s steps(4, end) infinite;
+  display: inline-block;
+  width: 1.5em;
+  text-align: left;
+}
+
+@keyframes dots {
+  0%  { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+}
+
+/* Divider */
+.alarm-panel-card__divider {
+  height: 1px;
+  background: var(--line);
+}
+
+/* Action buttons grid */
+.alarm-panel-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.alarm-btn {
+  flex: 1 1 auto;
+  min-width: 80px;
+  padding: 0.5625rem 0.875rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 140ms ease-out, opacity 140ms ease-out, transform 100ms ease-out;
+  background: var(--bg-subtle);
+  color: var(--text-dim);
+  border-color: var(--line);
+}
+
+.alarm-btn:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+}
+
+.alarm-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.alarm-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.alarm-btn--active {
+  cursor: default;
+  font-weight: 700;
+}
+
+/* Semantic colors */
+.alarm-btn--home:not(:disabled):not(.alarm-btn--active):hover {
+  background: var(--positive-soft);
+  color: var(--positive);
+  border-color: color-mix(in srgb, var(--positive) 30%, transparent);
+}
+.alarm-btn--home.alarm-btn--active {
+  background: var(--positive-soft);
+  color: var(--positive);
+  border-color: var(--positive);
+}
+
+.alarm-btn--away:not(:disabled):not(.alarm-btn--active):hover,
+.alarm-btn--vacation:not(:disabled):not(.alarm-btn--active):hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+}
+.alarm-btn--away.alarm-btn--active,
+.alarm-btn--vacation.alarm-btn--active {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.alarm-btn--night:not(:disabled):not(.alarm-btn--active):hover {
+  background: var(--info-soft);
+  color: var(--info);
+  border-color: color-mix(in srgb, var(--info) 30%, transparent);
+}
+.alarm-btn--night.alarm-btn--active {
+  background: var(--info-soft);
+  color: var(--info);
+  border-color: var(--info);
+}
+
+.alarm-btn--disarm:not(:disabled):not(.alarm-btn--active):hover {
+  background: var(--bg-subtle);
+  color: var(--text);
+  border-color: var(--border);
+}
+.alarm-btn--disarm.alarm-btn--active {
+  background: var(--bg-subtle);
+  color: var(--text-dim);
+  border-color: var(--border);
+}
+
+/* ===================================================
+   Numpad overlay & modal
+   =================================================== */
+.numpad-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: numpad-fade-in 150ms ease-out;
+}
+
+@keyframes numpad-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.numpad-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-elevated);
+  padding: 1.75rem 1.5rem 1.375rem;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: numpad-scale-in 150ms ease-out;
+}
+
+@keyframes numpad-scale-in {
+  from { transform: scale(0.94); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.numpad-modal__title {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  text-align: center;
+}
+
+.numpad-modal__subtitle {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+  margin: -0.625rem 0 0;
+  text-align: center;
+}
+
+/* Pin dots */
+.numpad-modal__display {
+  display: flex;
+  gap: 0.625rem;
+  padding: 0.625rem 1rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  min-width: 140px;
+  justify-content: center;
+}
+
+.numpad-modal__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: background 120ms ease-out, transform 120ms ease-out;
+}
+
+.numpad-modal__dot--filled {
+  background: var(--accent);
+  transform: scale(1.1);
+}
+
+/* Numpad grid */
+.numpad-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.numpad-key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--bg-subtle);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease-out, transform 80ms ease-out;
+  user-select: none;
+}
+
+.numpad-key:hover {
+  background: var(--bg-card-hover);
+}
+
+.numpad-key:active {
+  transform: scale(0.93);
+  background: var(--bg-subtle);
+}
+
+.numpad-key:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.numpad-key--action {
+  background: var(--bg-card);
+  color: var(--text-dim);
+}
+
+.numpad-key--confirm {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+  font-size: 1.375rem;
+}
+
+.numpad-key--confirm:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.numpad-key--confirm:disabled {
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+  border-color: var(--line);
+}
+
+/* Cancel */
+.numpad-modal__cancel {
+  width: 100%;
+  padding: 0.5625rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-faint);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 140ms ease-out, color 140ms ease-out;
+}
+
+.numpad-modal__cancel:hover {
+  background: var(--bg-subtle);
+  color: var(--text);
+}
