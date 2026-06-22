@@ -68,3 +68,27 @@
   user-select: none;
   letter-spacing: -0.01em;
 }
+
+/* =============================================================
+   Dropdown menu (host-supplied via UserMenuContext, e.g. SaaS account)
+   ============================================================= */
+.user-avatar-menu {
+  display: inline-flex;
+}
+
+/* Portaled to <body> with position:fixed set inline from the trigger rect, so
+   it escapes page stacking/overflow contexts (works on mobile). */
+.user-avatar-menu__panel {
+  min-width: 224px;
+  max-width: calc(100vw - 16px);
+  /* Match NotificationsPanel — the proven body-portaled dropdown. */
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  padding: 0.5rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}

@@ -23,6 +23,7 @@ import {
 } from '@hapulse/core';
 import type { HAConnection, AuthData, UnsubscribeFunc, HAUser, HassEntityMap } from '@hapulse/core';
 import { useEntityStore } from './entityStore';
+import { onboardingRedirectUrl } from '../app/basename';
 
 // ---------------------------------------------------------------------------
 // Module-scope connection state (not in Zustand state — mutable references)
@@ -117,7 +118,10 @@ interface ConnectionState {
 interface ConnectionActions {
   connect: (url: string, token: string) => Promise<void>;
   signInWithHomeAssistant: (url: string) => Promise<void>;
-  startDemo: () => void;
+  /** Enter demo mode. `persist` (default true) writes the demo connection to
+   *  localStorage; pass false for an ephemeral demo (e.g. the public /demo page)
+   *  so it doesn't leak a demo connection into a real session. */
+  startDemo: (persist?: boolean) => void;
   disconnect: () => void;
   init: () => Promise<void>;
 }
@@ -289,7 +293,8 @@ export const useConnectionStore = create<ConnectionState & ConnectionActions>()(
 
       // clientId must be `location.origin + "/"` per HA spec.
       const clientId = `${window.location.origin}/`;
-      const redirectUrl = `${window.location.origin}/onboarding`;
+      // Basename-aware: `/onboarding` (OSS) or `/app/onboarding` (hosted).
+      const redirectUrl = onboardingRedirectUrl();
 
       set({ status: 'connecting', error: undefined });
 
@@ -320,7 +325,7 @@ export const useConnectionStore = create<ConnectionState & ConnectionActions>()(
     },
 
     // ---- Demo mode ----
-    startDemo() {
+    startDemo(persist = true) {
       teardown();
       useEntityStore.getState().setRegistries(DEMO_REGISTRIES);
       useEntityStore.getState().setEntities(DEMO_ENTITIES);
@@ -341,7 +346,7 @@ export const useConnectionStore = create<ConnectionState & ConnectionActions>()(
       };
 
       set({ demo: true, mode: 'demo', status: 'connected', error: undefined, url: '', token: '', currentUser: demoUser });
-      persistConnection({ demo: true, mode: 'demo' });
+      if (persist) persistConnection({ demo: true, mode: 'demo' });
     },
 
     // ---- Disconnect ----
@@ -388,7 +393,7 @@ export const useConnectionStore = create<ConnectionState & ConnectionActions>()(
       // OAuth: resume on callback leg (?auth_callback=1) OR boot leg (stored tokens)
       if (mode === 'oauth') {
         const clientId = `${window.location.origin}/`;
-        const redirectUrl = `${window.location.origin}/onboarding`;
+        const redirectUrl = onboardingRedirectUrl();
 
         set({ status: 'connecting', error: undefined, url: persisted.url ?? '' });
 

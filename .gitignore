@@ -8,6 +8,10 @@ dist/
 coverage/
 .vite/
 
+# Next.js build output
+.next/
+next-env.d.ts
+
 # Local tooling / agent state
 .claude/
 .playwright-mcp/

@@ -3,6 +3,13 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./persistence": "./src/persistence/index.ts",
+    "./menu-context": "./src/app/userMenuContext.ts",
+    "./styles.css": "./src/styles/global.css"
+  },
+  "sideEffects": ["**/*.css"],
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.json && vite build",

@@ -154,7 +154,33 @@ export function BlindsCard({ entities, rooms, onSeeAll }: BlindsCardProps) {
     return [{ name: room.name, entities: roomEntities, avgPosition, anyMoving }];
   });
 
-  if (blindRooms.length === 0) {
+  // All hooks must run before any conditional return (Rules of Hooks). The
+  // cover set can transition between empty and non-empty across renders — e.g.
+  // entities momentarily flash to `unavailable` during an HA reconnect — so the
+  // early return below MUST come after these useCallbacks, never before, or the
+  // hook count changes between renders and React throws error #310.
+  const activeRoom =
+    blindRooms.find((r) => r.name === selectedRoomName) ?? blindRooms[0];
+
+  const handleOpen = useCallback(() => {
+    for (const e of activeRoom?.entities ?? []) {
+      void callService('cover', 'open_cover', {}, { entity_id: e.entity_id });
+    }
+  }, [activeRoom]);
+
+  const handleStop = useCallback(() => {
+    for (const e of activeRoom?.entities ?? []) {
+      void callService('cover', 'stop_cover', {}, { entity_id: e.entity_id });
+    }
+  }, [activeRoom]);
+
+  const handleClose = useCallback(() => {
+    for (const e of activeRoom?.entities ?? []) {
+      void callService('cover', 'close_cover', {}, { entity_id: e.entity_id });
+    }
+  }, [activeRoom]);
+
+  if (blindRooms.length === 0 || !activeRoom) {
     return (
       <Card className="blinds-card">
         <div className="blinds-card__header">
@@ -187,29 +213,9 @@ export function BlindsCard({ entities, rooms, onSeeAll }: BlindsCardProps) {
     );
   }
 
-  const activeRoom =
-    blindRooms.find((r) => r.name === selectedRoomName) ?? blindRooms[0]!;
   const colorKey = blindColorKey(activeRoom.avgPosition, activeRoom.anyMoving);
   const gaugeColor = BLIND_GAUGE_COLOR[colorKey];
   const chipKey = chipColorKey(blindRooms);
-
-  const handleOpen = useCallback(() => {
-    for (const e of activeRoom.entities) {
-      void callService('cover', 'open_cover', {}, { entity_id: e.entity_id });
-    }
-  }, [activeRoom]);
-
-  const handleStop = useCallback(() => {
-    for (const e of activeRoom.entities) {
-      void callService('cover', 'stop_cover', {}, { entity_id: e.entity_id });
-    }
-  }, [activeRoom]);
-
-  const handleClose = useCallback(() => {
-    for (const e of activeRoom.entities) {
-      void callService('cover', 'close_cover', {}, { entity_id: e.entity_id });
-    }
-  }, [activeRoom]);
 
   return (
     <Card className="blinds-card">

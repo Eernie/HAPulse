@@ -56,9 +56,9 @@ function PageFallback() {
   );
 }
 
-export function AppRouter() {
+export function AppRouter({ basename }: { basename?: string | undefined }) {
   return (
-    <BrowserRouter>
+    <BrowserRouter {...(basename !== undefined ? { basename } : {})}>
       <ScrollToTop />
       <Routes>
         <Route path="/onboarding" element={<Onboarding />} />

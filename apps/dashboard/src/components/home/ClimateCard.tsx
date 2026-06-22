@@ -152,8 +152,37 @@ export function ClimateCard({ entities, rooms, onSeeAll }: ClimateCardProps) {
     return [{ name: room.name, entity, currentTemp }];
   });
 
+  // All hooks must run before any conditional return (Rules of Hooks). The
+  // climate set can flip between empty and non-empty across renders — entities
+  // momentarily flash to `unavailable` during an HA reconnect — so these
+  // useCallbacks (and the values they close over) must be computed before the
+  // early return below; otherwise the hook count changes between renders and
+  // React throws error #310.
+  const activeRoom =
+    climateRooms.find((r) => r.name === selectedRoomName) ?? climateRooms[0];
+  const activeEntity = activeRoom?.entity;
+
+  // Temperatures
+  const currentTemp =
+    activeRoom?.currentTemp ??
+    (activeEntity?.attributes.current_temperature as number | undefined) ??
+    (activeEntity?.attributes.temperature as number | undefined) ??
+    20;
+  const setpointTemp =
+    (activeEntity?.attributes.temperature as number | undefined) ?? currentTemp;
+
+  const handleDown = useCallback(() => {
+    if (!activeEntity) return;
+    void callService('climate', 'set_temperature', { temperature: setpointTemp - 1 }, { entity_id: activeEntity.entity_id });
+  }, [activeEntity, setpointTemp]);
+
+  const handleUp = useCallback(() => {
+    if (!activeEntity) return;
+    void callService('climate', 'set_temperature', { temperature: setpointTemp + 1 }, { entity_id: activeEntity.entity_id });
+  }, [activeEntity, setpointTemp]);
+
   // No climate entities found — show the card with a prompt to hide it
-  if (climateRooms.length === 0) {
+  if (climateRooms.length === 0 || !activeRoom || !activeEntity) {
     return (
       <Card className="climate-card">
         <div className="climate-card__header">
@@ -175,37 +204,15 @@ export function ClimateCard({ entities, rooms, onSeeAll }: ClimateCardProps) {
     );
   }
 
-  // Active room — whichever was clicked, defaulting to the first
-  const activeRoom =
-    climateRooms.find((r) => r.name === selectedRoomName) ?? climateRooms[0]!;
-  const activeEntity = activeRoom.entity;
-
   const colorKey = hvacColorKey(activeEntity);
   const gaugeColor = HVAC_GAUGE_COLOR[colorKey];
   const chipKey = chipColorKey(climateRooms);
-
-  // Temperatures
-  const currentTemp =
-    activeRoom.currentTemp ??
-    (activeEntity.attributes.current_temperature as number | undefined) ??
-    (activeEntity.attributes.temperature as number | undefined) ??
-    20;
-  const setpointTemp =
-    (activeEntity.attributes.temperature as number | undefined) ?? currentTemp;
 
   // Gauge centre label — what the unit is currently doing
   const hvacAction = activeEntity.attributes.hvac_action as string | undefined;
   const gaugeLabel = (hvacAction ?? activeEntity.state)
     .charAt(0).toUpperCase() +
     (hvacAction ?? activeEntity.state).slice(1).replace(/_/g, ' ');
-
-  const handleDown = useCallback(() => {
-    void callService('climate', 'set_temperature', { temperature: setpointTemp - 1 }, { entity_id: activeEntity.entity_id });
-  }, [activeEntity.entity_id, setpointTemp]);
-
-  const handleUp = useCallback(() => {
-    void callService('climate', 'set_temperature', { temperature: setpointTemp + 1 }, { entity_id: activeEntity.entity_id });
-  }, [activeEntity.entity_id, setpointTemp]);
 
   const isOff = activeEntity.state === 'off';
 

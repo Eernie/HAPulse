@@ -3,8 +3,8 @@
  *
  * Order of operations:
  * 1. Apply saved theme immediately (before React hydrates) — prevents flash.
- * 2. Call connectionStore.init() to auto-reconnect from persisted credentials.
- * 3. Render the React tree.
+ * 2. Render <DashboardApp /> which handles connection init, theme subscription,
+ *    and system-mode watching via a one-time useEffect.
  */
 
 import React from 'react';
@@ -13,11 +13,9 @@ import { createRoot } from 'react-dom/client';
 // Global styles (fonts, reset, theme tokens, grain overlay)
 import './styles/global.css';
 
-import { applyTheme, watchSystemMode, THEME_NAMES } from './theme/themes';
+import { applyTheme, THEME_NAMES } from './theme/themes';
 import type { ThemeName, ThemeMode } from './theme/themes';
-import { useSettingsStore } from './stores/settingsStore';
-import { useConnectionStore } from './stores/connectionStore';
-import { AppRouter } from './app/Router';
+import { DashboardApp } from './app/DashboardApp';
 
 // Map any legacy persisted theme value to the current { theme, mode } model.
 function legacyTheme(value: string | undefined): { theme: ThemeName; mode: ThemeMode } {
@@ -63,30 +61,13 @@ function legacyTheme(value: string | undefined): { theme: ThemeName; mode: Theme
 })();
 
 // ---------------------------------------------------------------------------
-// 2. Keep the DOM in sync with settings changes AND the OS color scheme.
-// ---------------------------------------------------------------------------
-useSettingsStore.subscribe((state) => {
-  applyTheme(state.theme, state.mode, state.accentHue);
-});
-
-watchSystemMode(() => {
-  const s = useSettingsStore.getState();
-  return { theme: s.theme, mode: s.mode, accentHue: s.accentHue };
-});
-
-// ---------------------------------------------------------------------------
-// 3. Kick off auto-reconnect from persisted credentials (async, non-blocking)
-// ---------------------------------------------------------------------------
-useConnectionStore.getState().init();
-
-// ---------------------------------------------------------------------------
-// 4. Render
+// 2. Render — DashboardApp handles subscribe/watchSystemMode/init internally
 // ---------------------------------------------------------------------------
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('[HAPulse] No #root element found in index.html');
 
 createRoot(rootEl).render(
   <React.StrictMode>
-    <AppRouter />
+    <DashboardApp />
   </React.StrictMode>
 );
