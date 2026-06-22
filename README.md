@@ -37,7 +37,13 @@ HAPulse is a fully client-side single-page app that connects directly to your Ho
 
 ## Quick start
 
-### Docker (recommended)
+### Hosted — try it instantly
+
+The quickest way to use HAPulse is the **[hosted version](https://pulse.homeassistant-dashboard.com)** — no setup, no maintenance, always up to date. Create an account, connect your Home Assistant, and you're done. Even on the hosted version your Home Assistant access token is never stored on the server — it stays in your browser. Subscriptions also help fund ongoing development.
+
+Want to look around first? **[Explore the live demo](https://pulse.homeassistant-dashboard.com/demo)** — no account or Home Assistant required.
+
+### Docker (recommended for self-hosting)
 
 ```bash
 docker compose -f docker/docker-compose.yml up -d
