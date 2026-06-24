@@ -31,10 +31,25 @@
 }
 
 /* ── Sections ───────────────────────────────────────────── */
+/* Mobile / narrow: single column stack (default). */
 .room-page__sections {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+/* Desktop: 2-column grid. Sections default to full width (span-2) but can be
+   narrowed to half (span-1) via the edit-mode resize handle. */
+@media (min-width: 900px) {
+  .room-page__sections {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1rem;
+    align-items: start;
+  }
+
+  .room-page__section--span-1 { grid-column: span 1; }
+  .room-page__section--span-2 { grid-column: 1 / -1; }
 }
 
 .room-page__section {
@@ -78,6 +93,72 @@
 
 .room-section__grip:active {
   cursor: grabbing;
+}
+
+/* ── Section width controls (edit mode) ─────────────────── */
+/* Width indicator dots, top-right (the grip + label sit top-left). */
+.room-section__span-dots {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  display: flex;
+  gap: 3px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.room-section__span-dot {
+  width: 12px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 150ms ease-out;
+}
+
+.room-section__span-dot--filled {
+  background: var(--accent);
+}
+
+/* Drag handle, right edge centered — same affordance as the grid pages. */
+.room-section__resize-handle {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 40px;
+
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+
+  cursor: ew-resize;
+  touch-action: none;
+  color: var(--text-faint);
+  padding: 0;
+
+  transition: background 150ms ease-out, color 150ms ease-out, border-color 150ms ease-out;
+}
+
+.room-section__resize-handle:hover {
+  background: var(--bg-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* The 2-column grid (and thus the resize handle) only applies on desktop;
+   hide the handle on narrow screens where sections are always full width. */
+@media (max-width: 899px) {
+  .room-section__resize-handle,
+  .room-section__span-dots {
+    display: none;
+  }
 }
 
 /* Standard entity card grid */

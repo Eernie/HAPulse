@@ -72,7 +72,13 @@
   flex: 1;
   min-height: 0;
   max-height: 400px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
 }
+
+.bat-list::-webkit-scrollbar { width: 4px; }
+.bat-list::-webkit-scrollbar-track { background: transparent; }
+.bat-list::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
 
 .bat-row {
   display: grid;

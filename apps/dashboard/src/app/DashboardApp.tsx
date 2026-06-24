@@ -11,13 +11,14 @@
  *   - Deciding whether to wrap in React.StrictMode
  */
 
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { applyTheme, watchSystemMode } from '../theme/themes';
 import { useSettingsStore } from '../stores/settingsStore';
-import { useConnectionStore } from '../stores/connectionStore';
+import { useConnectionStore, hasResumableConnection } from '../stores/connectionStore';
 import { AppRouter } from './Router';
 import { UserMenuContext } from './userMenuContext';
 import { setAppBasename } from './basename';
+import { DashboardBootLoading } from '../components/ui/DashboardBootLoading';
 
 // Guard against React 19 StrictMode's double-invocation running init twice.
 let _initialised = false;
@@ -40,6 +41,14 @@ export interface DashboardAppProps {
 }
 
 export function DashboardApp({ basename, accountMenu, demo = false }: DashboardAppProps) {
+  // Boot gate: while an auto-reconnect from persisted credentials is in flight,
+  // show the branded loading animation instead of letting the route guard flash
+  // the login screen (OAuth) or an empty shell (token). Computed once at mount —
+  // the demo entry never waits, and a brand-new user with no creds goes straight
+  // to onboarding.
+  const [waitingForBoot] = useState(() => !demo && hasResumableConnection());
+  const booted = useConnectionStore((s) => s.booted);
+
   useEffect(() => {
     // Record the basename so the HA OAuth redirect URL is correct (e.g. the
     // hosted app is mounted at /app, so the callback must return to
@@ -73,6 +82,10 @@ export function DashboardApp({ basename, accountMenu, demo = false }: DashboardA
       useConnectionStore.getState().init();
     }
   }, [demo, basename]);
+
+  if (waitingForBoot && !booted) {
+    return <DashboardBootLoading />;
+  }
 
   return (
     <UserMenuContext.Provider value={accountMenu}>

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import {
-  ChevronLeft, GripVertical,
+  ChevronLeft, GripVertical, Scaling,
   Sparkles, Sun, Moon, Coffee, Tv, Music2, Sunset, PartyPopper, BookOpen,
 } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
@@ -65,15 +65,108 @@ function sceneIcon(name: string): React.ReactNode {
   return <Sparkles size={16} strokeWidth={1.75} />;
 }
 
+// ── Section width (2-column grid) ─────────────────────────────────────────────
+
+const ROOM_MAX_COLS = 2;
+
+/** Stored room-section spans are keyed `${areaId}:${sectionKey}`. Default 2 (full). */
+function roomSpanKey(areaId: string, sectionKey: string): string {
+  return `${areaId}:${sectionKey}`;
+}
+
+function getRoomSpan(areaId: string, sectionKey: string, stored: Record<string, number>): number {
+  const v = stored[roomSpanKey(areaId, sectionKey)] ?? ROOM_MAX_COLS;
+  return Math.max(1, Math.min(ROOM_MAX_COLS, v));
+}
+
+function roomSpanClass(span: number): string {
+  return span >= ROOM_MAX_COLS ? 'room-page__section--span-2' : 'room-page__section--span-1';
+}
+
+/** Two-block indicator of the section's current width (edit mode). */
+function RoomSpanDots({ span }: { span: number }) {
+  return (
+    <div className="room-section__span-dots" aria-hidden="true">
+      {Array.from({ length: ROOM_MAX_COLS }, (_, i) => (
+        <span
+          key={i}
+          className={`room-section__span-dot${i < span ? ' room-section__span-dot--filled' : ''}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Drag left/right to change a room section between half and full width. */
+function RoomResizeHandle({
+  span,
+  onCommit,
+}: {
+  span: number;
+  onCommit: (newSpan: number) => void;
+}) {
+  function handlePointerDown(e: React.PointerEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation(); // don't start a section drag
+
+    const btn = e.currentTarget;
+    btn.setPointerCapture(e.pointerId);
+
+    const sectionEl = btn.closest('.room-page__section') as HTMLElement | null;
+    const gridEl = btn.closest('.room-page__sections') as HTMLElement | null;
+    if (!sectionEl || !gridEl) return;
+
+    const colWidth = gridEl.getBoundingClientRect().width / ROOM_MAX_COLS;
+    const startX = e.clientX;
+    const startSpan = span;
+    let previewSpan = startSpan;
+
+    function onMove(me: PointerEvent) {
+      const delta = Math.round((me.clientX - startX) / colWidth);
+      const next = Math.max(1, Math.min(ROOM_MAX_COLS, startSpan + delta));
+      if (next !== previewSpan) {
+        previewSpan = next;
+        sectionEl!.style.gridColumn = next >= ROOM_MAX_COLS ? '1 / -1' : 'span 1';
+      }
+    }
+
+    function onUp() {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      sectionEl!.style.gridColumn = ''; // class takes over after re-render
+      onCommit(previewSpan);
+    }
+
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  }
+
+  return (
+    <button
+      type="button"
+      className="room-section__resize-handle"
+      onPointerDown={handlePointerDown}
+      aria-label={`Drag to resize — currently ${span} of ${ROOM_MAX_COLS} columns`}
+      title={`Drag left / right to resize (${span} of ${ROOM_MAX_COLS} columns)`}
+    >
+      <Scaling size={12} strokeWidth={2.5} />
+    </button>
+  );
+}
+
 // ── Sortable section wrapper ──────────────────────────────────────────────────
 
 function SortableSectionInner({
   id,
   label,
+  span,
+  onCommitSpan,
   children,
 }: {
   id: string;
   label: string;
+  span: number;
+  onCommitSpan: (newSpan: number) => void;
   children: React.ReactNode;
 }) {
   const {
@@ -91,6 +184,7 @@ function SortableSectionInner({
       ref={setNodeRef}
       className={[
         'room-page__section',
+        roomSpanClass(span),
         isDragging ? 'room-page__section--dragging' : '',
       ].filter(Boolean).join(' ')}
       style={{
@@ -114,6 +208,8 @@ function SortableSectionInner({
         <SectionLabel>{label}</SectionLabel>
       </div>
       {children}
+      <RoomSpanDots span={span} />
+      <RoomResizeHandle span={span} onCommit={onCommitSpan} />
     </section>
   );
 }
@@ -168,7 +264,7 @@ export function Room() {
   const customization = useCustomization();
   const editMode = useUIStore((s) => s.editMode);
   const updateCustomization = useSettingsStore((s) => s.updateCustomization);
-  const { hiddenEntities, entityOverrides, entityOrder, favorites, roomSectionOrder } = customization;
+  const { hiddenEntities, entityOverrides, entityOrder, favorites, roomSectionOrder, roomSectionSpans } = customization;
 
   if (!areaId || !room) {
     return (
@@ -226,6 +322,16 @@ export function Room() {
       });
     },
     [areaId, roomSectionOrder, updateCustomization]
+  );
+
+  const handleSectionSpanChange = useCallback(
+    (sectionKey: string, newSpan: number) => {
+      if (!areaId) return;
+      updateCustomization({
+        roomSectionSpans: { ...roomSectionSpans, [roomSpanKey(areaId, sectionKey)]: newSpan },
+      });
+    },
+    [areaId, roomSectionSpans, updateCustomization]
   );
 
   // Gather domain → ids
@@ -464,6 +570,8 @@ export function Room() {
               key={s.key}
               id={s.key}
               label={s.label}
+              span={getRoomSpan(areaId, s.key, roomSectionSpans)}
+              onCommitSpan={(newSpan) => handleSectionSpanChange(s.key, newSpan)}
             >
               {renderSectionContent(s)}
             </SortableSectionInner>
@@ -472,7 +580,10 @@ export function Room() {
       ) : (
         <div className="room-page__sections">
           {orderedSectionDefs.map((s) => (
-            <section key={s.key} className="room-page__section">
+            <section
+              key={s.key}
+              className={['room-page__section', roomSpanClass(getRoomSpan(areaId, s.key, roomSectionSpans))].join(' ')}
+            >
               <SectionLabel>{s.label}</SectionLabel>
               {renderSectionContent(s)}
             </section>

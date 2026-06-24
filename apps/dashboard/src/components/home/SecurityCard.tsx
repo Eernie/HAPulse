@@ -122,6 +122,7 @@ export function SecurityCard({ entities }: SecurityCardProps) {
         </button>
       </div>
 
+      <div className="card-scroll-body card-scroll-wrap">
       {/* Alarm row */}
       {alarm && (
         <div className="security-row">
@@ -244,6 +245,7 @@ export function SecurityCard({ entities }: SecurityCardProps) {
           All sensors are normal
         </p>
       )}
+      </div>
     </Card>
   );
 }

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 import { useShallow } from 'zustand/react/shallow';
 import { AlertTriangle, Lock, ChevronDown } from 'lucide-react';
 import { PulseLogo } from '../components/ui/PulseLogo';
+import { DashboardBootLoading } from '../components/ui/DashboardBootLoading';
 import { useConnectionStore } from '../stores/connectionStore';
 import { HAAuthError, HAConnectionError } from '@hapulse/core';
 import './Onboarding.css';
@@ -24,11 +25,10 @@ function isAuthCallback(): boolean {
 }
 
 export function Onboarding() {
-  const { status, mode, error: storeError, signInWithHomeAssistant, connect, startDemo } =
+  const { status, error: storeError, signInWithHomeAssistant, connect, startDemo } =
     useConnectionStore(
       useShallow((s) => ({
         status: s.status,
-        mode: s.mode,
         error: s.error,
         signInWithHomeAssistant: s.signInWithHomeAssistant,
         connect: s.connect,
@@ -147,22 +147,12 @@ export function Onboarding() {
     navigate('/', { replace: true });
   }
 
-  // ---- Callback/boot leg: show a spinner while init() runs ----
-  const isResuming =
-    (isAuthCallback() || (mode === 'oauth' && !storeError)) &&
-    (status === 'connecting' || status === 'idle');
-
-  if (isResuming) {
-    return (
-      <div className="onboarding">
-        <div className="onboarding__bg" aria-hidden="true" />
-        <div className="onboarding__card stagger-rise onboarding__card--connecting">
-          <PulseLogo size={40} />
-          <span className="spinner onboarding__resume-spinner" aria-hidden="true" />
-          <p className="onboarding__resume-text">finishing sign-in…</p>
-        </div>
-      </div>
-    );
+  // ---- Connecting/connected: show the branded loader instead of the form ----
+  // Covers the OAuth callback leg (init() resuming), an in-flight sign-in, and
+  // the brief window after a successful connect while the redirect effect above
+  // navigates to "/". Keeps the loading animation seamless with the boot gate.
+  if (status === 'connecting' || status === 'connected') {
+    return <DashboardBootLoading label={isAuthCallback() ? 'Finishing sign-in…' : 'Connecting…'} />;
   }
 
   return (

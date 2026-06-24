@@ -113,6 +113,10 @@ interface ConnectionState {
   /** The signed-in HA user. Null until fetchCurrentUser resolves, or in demo mode
    *  a synthetic user is set. Reset to null on disconnect. Not persisted. */
   currentUser: HAUser | null;
+  /** True once the initial boot-time init() has settled (whether it resumed a
+   *  session, found nothing, or failed). The boot gate waits on this to avoid
+   *  flashing the login screen while an auto-reconnect is still in flight. */
+  booted: boolean;
 }
 
 interface ConnectionActions {
@@ -253,6 +257,7 @@ export const useConnectionStore = create<ConnectionState & ConnectionActions>()(
     status: 'idle',
     error: undefined,
     currentUser: null,
+    booted: false,
 
     // ---- LLAT (token) connect ----
     async connect(url: string, token: string) {
@@ -367,81 +372,88 @@ export const useConnectionStore = create<ConnectionState & ConnectionActions>()(
 
     // ---- Init on app start ----
     async init() {
-      const persisted = loadPersistedConnection();
-      if (!persisted) return;
+      // `booted` is flipped true once this initial attempt settles (any path),
+      // so the boot gate can release. Wrapped in try/finally so every early
+      // return below still marks boot complete.
+      try {
+        const persisted = loadPersistedConnection();
+        if (!persisted) return;
 
-      // Backward-compat: existing `{url, token}` blobs without mode → token mode
-      // `{demo: true}` blobs → demo mode
-      const mode: ConnectionMode | null =
-        persisted.mode ??
-        (persisted.demo ? 'demo' : persisted.url && persisted.token ? 'token' : null);
+        // Backward-compat: existing `{url, token}` blobs without mode → token mode
+        // `{demo: true}` blobs → demo mode
+        const mode: ConnectionMode | null =
+          persisted.mode ??
+          (persisted.demo ? 'demo' : persisted.url && persisted.token ? 'token' : null);
 
-      if (mode === 'demo') {
-        useConnectionStore.getState().startDemo();
-        return;
-      }
-
-      if (mode === 'token' && persisted.url && persisted.token) {
-        try {
-          await useConnectionStore.getState().connect(persisted.url, persisted.token);
-        } catch {
-          // Silent failure — the route guard will redirect to /onboarding
+        if (mode === 'demo') {
+          useConnectionStore.getState().startDemo();
+          return;
         }
-        return;
-      }
 
-      // OAuth: resume on callback leg (?auth_callback=1) OR boot leg (stored tokens)
-      if (mode === 'oauth') {
-        const clientId = `${window.location.origin}/`;
-        const redirectUrl = onboardingRedirectUrl();
-
-        set({ status: 'connecting', error: undefined, url: persisted.url ?? '' });
-
-        try {
-          const conn = await resumeHASession({
-            clientId,
-            redirectUrl,
-            saveTokens: saveHATokens,
-            loadTokens: loadHATokens,
-          });
-
-          if (conn === null) {
-            // No stored tokens and no callback — need fresh sign-in
-            clearPersistedConnection();
-            set({ status: 'idle', error: undefined });
-            return;
+        if (mode === 'token' && persisted.url && persisted.token) {
+          try {
+            await useConnectionStore.getState().connect(persisted.url, persisted.token);
+          } catch {
+            // Silent failure — the route guard will redirect to /onboarding
           }
-
-          await wireConnection(conn, set);
-
-          set({
-            url: persisted.url ?? '',
-            mode: 'oauth',
-            status: 'connected',
-            error: undefined,
-          });
-
-          // Strip auth_callback query params from URL without triggering a navigation
-          if (window.location.search.includes('auth_callback')) {
-            const clean = window.location.pathname + window.location.hash;
-            window.history.replaceState(null, '', clean);
-          }
-        } catch (err) {
-          teardown();
-          clearHATokens();
-          // If persisted mode was oauth but tokens are gone/expired, reset to idle
-          // so the route guard sends the user back to /onboarding.
-          let errorMsg = 'session expired — sign in again';
-          if (err instanceof HAAuthError) {
-            errorMsg = err.message;
-          } else if (err instanceof HAConnectionError) {
-            errorMsg = err.message;
-          } else if (err instanceof Error) {
-            errorMsg = err.message;
-          }
-          set({ status: 'error', error: errorMsg, mode: null });
-          // Don't rethrow — init failure is handled by the route guard
+          return;
         }
+
+        // OAuth: resume on callback leg (?auth_callback=1) OR boot leg (stored tokens)
+        if (mode === 'oauth') {
+          const clientId = `${window.location.origin}/`;
+          const redirectUrl = onboardingRedirectUrl();
+
+          set({ status: 'connecting', error: undefined, url: persisted.url ?? '' });
+
+          try {
+            const conn = await resumeHASession({
+              clientId,
+              redirectUrl,
+              saveTokens: saveHATokens,
+              loadTokens: loadHATokens,
+            });
+
+            if (conn === null) {
+              // No stored tokens and no callback — need fresh sign-in
+              clearPersistedConnection();
+              set({ status: 'idle', error: undefined });
+              return;
+            }
+
+            await wireConnection(conn, set);
+
+            set({
+              url: persisted.url ?? '',
+              mode: 'oauth',
+              status: 'connected',
+              error: undefined,
+            });
+
+            // Strip auth_callback query params from URL without triggering a navigation
+            if (window.location.search.includes('auth_callback')) {
+              const clean = window.location.pathname + window.location.hash;
+              window.history.replaceState(null, '', clean);
+            }
+          } catch (err) {
+            teardown();
+            clearHATokens();
+            // If persisted mode was oauth but tokens are gone/expired, reset to idle
+            // so the route guard sends the user back to /onboarding.
+            let errorMsg = 'session expired — sign in again';
+            if (err instanceof HAAuthError) {
+              errorMsg = err.message;
+            } else if (err instanceof HAConnectionError) {
+              errorMsg = err.message;
+            } else if (err instanceof Error) {
+              errorMsg = err.message;
+            }
+            set({ status: 'error', error: errorMsg, mode: null });
+            // Don't rethrow — init failure is handled by the route guard
+          }
+        }
+      } finally {
+        set({ booted: true });
       }
     },
   })
@@ -453,4 +465,24 @@ export const useConnectionStore = create<ConnectionState & ConnectionActions>()(
  */
 export function getLiveConnection(): HAConnection | null {
   return _conn;
+}
+
+/**
+ * True when boot-time init() will attempt to resume a session — i.e. there is a
+ * persisted connection (demo, token, or oauth) or we're on the OAuth callback
+ * leg. The boot gate uses this to decide whether to show the loading animation
+ * (vs. going straight to onboarding for a brand-new user with no credentials).
+ */
+export function hasResumableConnection(): boolean {
+  if (typeof window !== 'undefined' && window.location.search.includes('auth_callback')) {
+    return true;
+  }
+  const persisted = loadPersistedConnection();
+  if (!persisted) return false;
+  return (
+    persisted.demo === true ||
+    persisted.mode === 'oauth' ||
+    persisted.mode === 'token' ||
+    (!!persisted.url && !!persisted.token)
+  );
 }

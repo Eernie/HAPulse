@@ -13,6 +13,7 @@ import {
 import { SortableGrid } from '../components/ui/SortableGrid';
 import { SortableItem } from '../components/ui/SortableItem';
 import { EditBadge } from '../components/ui/EditBadge';
+import { HeightHandle, HeightDots, heightClass, getHeightLevel } from '../components/ui/SectionResize';
 import { EditToggle } from '../components/ui/EditToggle';
 import { PageHeaderActions } from '../components/ui/PageHeaderActions';
 import { useEnergy } from '../ha/useEnergy';
@@ -148,6 +149,7 @@ export function Energy() {
   const hiddenEnergySections = useSettingsStore(useShallow((s) => s.customization.hiddenEnergySections));
   const mobileHiddenEnergySections = useSettingsStore(useShallow((s) => s.customization.mobileHiddenEnergySections));
   const energySectionSpans = useSettingsStore(useShallow((s) => s.customization.energySectionSpans));
+  const energySectionHeights = useSettingsStore(useShallow((s) => s.customization.energySectionHeights));
   const updateCustomization = useSettingsStore((s) => s.updateCustomization);
 
   const handleToggleHidden = useCallback(
@@ -175,6 +177,13 @@ export function Energy() {
       updateCustomization({ energySectionSpans: { ...energySectionSpans, [id]: newSpan } });
     },
     [energySectionSpans, updateCustomization]
+  );
+
+  const handleHeightChange = useCallback(
+    (id: string, newLevel: number) => {
+      updateCustomization({ energySectionHeights: { ...energySectionHeights, [id]: newLevel } });
+    },
+    [energySectionHeights, updateCustomization]
   );
 
   const handleReorder = useCallback(
@@ -266,12 +275,15 @@ export function Energy() {
           const isMobileHidden = mobileHiddenEnergySections.includes(id);
           const currentSpan = getSpan(id, energySectionSpans);
           const sc          = spanClass(currentSpan);
+          const currentHeight = getHeightLevel(id, energySectionHeights);
+          const hc            = heightClass(currentHeight);
           const widget      = renderWidget(id, dashboard);
 
           if (!editMode) {
             const cellClass = [
               'overview-grid__cell',
               sc,
+              hc,
               isHidden ? 'overview-grid__cell--hidden' : '',
               isMobileHidden ? 'section-mobile-hidden' : '',
             ].filter(Boolean).join(' ');
@@ -285,6 +297,7 @@ export function Energy() {
           const cellClass = [
             'overview-grid__cell',
             'overview-grid__cell--editing',
+            hc,
             isHidden ? 'overview-grid__cell--hidden' : '',
           ].filter(Boolean).join(' ');
 
@@ -302,6 +315,8 @@ export function Energy() {
                 />
                 <SpanDots span={currentSpan} />
                 <ResizeHandle id={id} span={currentSpan} onCommit={handleSpanChange} />
+                <HeightDots level={currentHeight} />
+                <HeightHandle id={id} level={currentHeight} onCommit={handleHeightChange} />
               </div>
             </SortableItem>
           );

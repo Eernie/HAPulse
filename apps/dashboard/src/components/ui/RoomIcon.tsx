@@ -73,7 +73,7 @@ interface RoomIconProps {
   name: string;
   size?: number;
   strokeWidth?: number;
-  className?: string;
+  className?: string | undefined;
 }
 
 export function RoomIcon({ name, size = 20, strokeWidth = 1.75, className }: RoomIconProps) {

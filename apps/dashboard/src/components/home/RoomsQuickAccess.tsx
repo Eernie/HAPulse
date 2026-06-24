@@ -7,7 +7,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Thermometer, Droplets, Lightbulb } from 'lucide-react';
 import { roomSummary } from '@hapulse/core';
 import type { Room, HassEntityMap } from '@hapulse/core';
-import { RoomIcon } from '../ui/RoomIcon';
+import { RoomDisplayIcon } from '../ui/RoomDisplayIcon';
 import { roomDisplayIcon } from '../../lib/roomIcon';
 import { SectionLabel } from '../ui/SectionLabel';
 import { useSettingsStore } from '../../stores/settingsStore';
@@ -67,8 +67,10 @@ export function RoomsQuickAccess({ rooms, entities }: RoomsQuickAccessProps) {
                   'rooms-quick-tile__icon-box',
                   isStatus ? 'rooms-quick-tile__icon-box--status' : lightsOn ? 'rooms-quick-tile__icon-box--active' : '',
                 ].filter(Boolean).join(' ')}>
-                <RoomIcon
-                  name={iconName}
+                <RoomDisplayIcon
+                  roomIcon={room.icon}
+                  iconName={iconName}
+                  isStatus={isStatus}
                   size={22}
                   className="rooms-quick-tile__icon"
                 />

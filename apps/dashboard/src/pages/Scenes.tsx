@@ -7,6 +7,7 @@ import { SceneRoomCard } from '../components/scenes/SceneRoomCard';
 import { SortableGrid } from '../components/ui/SortableGrid';
 import { SortableItem } from '../components/ui/SortableItem';
 import { EditBadge } from '../components/ui/EditBadge';
+import { HeightHandle, HeightDots, heightClass, getHeightLevel } from '../components/ui/SectionResize';
 import { EditToggle } from '../components/ui/EditToggle';
 import { PageHeaderActions } from '../components/ui/PageHeaderActions';
 import { useEntitiesByDomain } from '../ha/hooks';
@@ -145,15 +146,20 @@ export function Scenes() {
   const sceneSectionSpans = useSettingsStore(
     useShallow((s) => s.customization.sceneSectionSpans)
   );
+  const sceneSectionHeights = useSettingsStore(
+    useShallow((s) => s.customization.sceneSectionHeights)
+  );
   const updateCustomization = useSettingsStore((s) => s.updateCustomization);
 
   // Build area map and entity→area map from registries
   const { areaMap, entityAreaMap } = useMemo(() => {
-    const am: Record<string, { name: string; icon: string }> = {};
+    const am: Record<string, { name: string; icon: string; haIcon: string | null }> = {};
     for (const area of registries?.areas ?? []) {
       am[area.area_id] = {
         name: area.name,
+        // Resolved lucide name (fallback) + the raw HA icon (for MDI rendering)
         icon: roomIconName({ name: area.name, ...(area.icon != null && { icon: area.icon }) }),
+        haIcon: area.icon ?? null,
       };
     }
     const em: Record<string, string | null> = {};
@@ -208,6 +214,15 @@ export function Scenes() {
     [sceneSectionSpans, updateCustomization]
   );
 
+  const handleHeightChange = useCallback(
+    (id: string, newLevel: number) => {
+      updateCustomization({
+        sceneSectionHeights: { ...sceneSectionHeights, [id]: newLevel },
+      });
+    },
+    [sceneSectionHeights, updateCustomization]
+  );
+
   const handleReorder = useCallback(
     (newOrder: string[]) => {
       updateCustomization({ sceneSectionOrder: newOrder });
@@ -241,11 +256,13 @@ export function Scenes() {
     const areaId   = sectionIdToAreaId(id);
     const roomName = areaId === 'general' ? 'General' : (areaMap[areaId]?.name ?? areaId);
     const roomIcon = areaId === 'general' ? 'house' : (areaMap[areaId]?.icon ?? 'house');
+    const roomHaIcon = areaId === 'general' ? null : (areaMap[areaId]?.haIcon ?? null);
     const roomScenes = scenes.filter((e) => getSceneAreaId(e) === areaId);
     return (
       <SceneRoomCard
         roomName={roomName}
         roomIcon={roomIcon}
+        roomHaIcon={roomHaIcon}
         scenes={roomScenes}
       />
     );
@@ -269,12 +286,15 @@ export function Scenes() {
           const isMobileHidden = mobileHiddenSceneSections.includes(id);
           const currentSpan = getSpan(id, sceneSectionSpans);
           const sc          = spanClass(currentSpan);
+          const currentHeight = getHeightLevel(id, sceneSectionHeights);
+          const hc            = heightClass(currentHeight);
           const widget      = renderWidget(id);
 
           if (!editMode) {
             const cellClass = [
               'overview-grid__cell',
               sc,
+              hc,
               isHidden ? 'overview-grid__cell--hidden' : '',
               isMobileHidden ? 'section-mobile-hidden' : '',
             ].filter(Boolean).join(' ');
@@ -289,6 +309,7 @@ export function Scenes() {
           const cellClass = [
             'overview-grid__cell',
             'overview-grid__cell--editing',
+            hc,
             isHidden ? 'overview-grid__cell--hidden' : '',
           ].filter(Boolean).join(' ');
 
@@ -310,6 +331,8 @@ export function Scenes() {
                 />
                 <SpanDots span={currentSpan} />
                 <ResizeHandle id={id} span={currentSpan} onCommit={handleSpanChange} />
+                <HeightDots level={currentHeight} />
+                <HeightHandle id={id} level={currentHeight} onCommit={handleHeightChange} />
               </div>
             </SortableItem>
           );

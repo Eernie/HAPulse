@@ -73,7 +73,7 @@ export function ScenesCard({ entities }: ScenesCardProps) {
       </div>
 
       {scenes.length > 0 ? (
-        <div className={scrollable ? 'scenes-card__scroll-track' : 'scenes-card__grid'}>
+        <div className={`card-scroll-body ${scrollable ? 'scenes-card__scroll-track' : 'scenes-card__grid'}`}>
           {scenes.map((scene, i) => {
             const palette = SCENE_ICON_COLORS[i % SCENE_ICON_COLORS.length]!;
             const name = (scene.attributes.friendly_name ?? scene.entity_id.split('.')[1]!).replace(/_/g, ' ');

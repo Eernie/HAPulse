@@ -133,7 +133,7 @@ export function DevicesCard({ entities, rooms, favorites }: DevicesCardProps) {
         </div>
       ) : (
         <ul
-          className={`devices-card__list${scrollable ? ' devices-card__list--scrollable' : ''}`}
+          className={`devices-card__list card-scroll-body${scrollable ? ' devices-card__list--scrollable' : ''}`}
           aria-label="Active favorite devices"
         >
           {activeDevices.map((entity) => {

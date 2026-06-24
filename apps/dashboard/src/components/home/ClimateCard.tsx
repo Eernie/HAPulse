@@ -239,6 +239,7 @@ export function ClimateCard({ entities, rooms, onSeeAll }: ClimateCardProps) {
         )}
       </div>
 
+      <div className="card-scroll-body card-scroll-wrap">
       {/* Controls — top, reflect selected room */}
       <div className="climate-card__gauge-wrap" data-hvac={colorKey}>
         <ArcGauge value={currentTemp} label={gaugeLabel} size={128} fillColor={gaugeColor} />
@@ -293,6 +294,7 @@ export function ClimateCard({ entities, rooms, onSeeAll }: ClimateCardProps) {
           );
         })}
       </ul>
+      </div>
     </Card>
   );
 }

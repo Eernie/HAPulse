@@ -149,7 +149,7 @@ export function ActivityCard({ entities, hideSeeAll = false }: ActivityCardProps
         )}
       </div>
 
-      <ul className="activity-card__list" aria-label="Recent activity">
+      <ul className="activity-card__list card-scroll-body" aria-label="Recent activity">
         {recent.map((entity) => {
           const chip = activityChipStyle(entity);
           const name = (entity.attributes.friendly_name ?? entity.entity_id.split('.')[1]!).replace(/_/g, ' ');

@@ -25,6 +25,9 @@ export { domainOf, isToggleable, formatEntityState, domainIcon, isFavoriteReleva
 export { roomIconName, roomStatusIconName, CANONICAL_ROOM_ICONS } from './roomIcons.js';
 export type { RoomIconName } from './roomIcons.js';
 
+// HA icon string → @mdi/js export name converter
+export { mdiIconExportName } from './mdiIcon.js';
+
 // Types
 export type {
   HassEntity,

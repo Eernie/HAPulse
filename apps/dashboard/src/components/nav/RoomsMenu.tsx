@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
 import { useRooms, useCustomization } from '../../ha/hooks';
-import { RoomIcon } from '../ui/RoomIcon';
+import { RoomDisplayIcon } from '../ui/RoomDisplayIcon';
 import { roomIconName } from '@hapulse/core';
 import type { Room } from '@hapulse/core';
 import './RoomsMenu.css';
@@ -142,8 +142,10 @@ export function RoomsMenu({ open, onClose, triggerRef }: RoomsMenuProps) {
               className="rooms-menu__row"
               onClick={() => handleRoomClick(room.id)}
             >
-              <RoomIcon
-                name={roomIconName({ name: room.name, icon: room.icon ?? null })}
+              <RoomDisplayIcon
+                roomIcon={room.icon}
+                iconName={roomIconName({ name: room.name, icon: room.icon ?? null })}
+                isStatus={false}
                 size={18}
                 className="rooms-menu__row-icon"
               />

@@ -16,6 +16,7 @@ import { ClimateAllModal, BlindsAllModal } from '../components/home/chipmodals';
 import { SortableGrid } from '../components/ui/SortableGrid';
 import { SortableItem } from '../components/ui/SortableItem';
 import { EditBadge } from '../components/ui/EditBadge';
+import { HeightHandle, HeightDots, heightClass, getHeightLevel } from '../components/ui/SectionResize';
 import { EditToggle } from '../components/ui/EditToggle';
 import { PageHeaderActions } from '../components/ui/PageHeaderActions';
 import {
@@ -175,6 +176,9 @@ export function Home() {
   const homeSectionSpans = useSettingsStore(
     useShallow((s) => s.customization.homeSectionSpans)
   );
+  const homeSectionHeights = useSettingsStore(
+    useShallow((s) => s.customization.homeSectionHeights)
+  );
   const roomOrder = useSettingsStore(
     useShallow((s) => s.customization.roomOrder)
   );
@@ -231,6 +235,16 @@ export function Home() {
       });
     },
     [homeSectionSpans, updateCustomization]
+  );
+
+  /** Persist a new max-height level for a section. */
+  const handleHeightChange = useCallback(
+    (id: string, newLevel: number) => {
+      updateCustomization({
+        homeSectionHeights: { ...homeSectionHeights, [id]: newLevel },
+      });
+    },
+    [homeSectionHeights, updateCustomization]
   );
 
   /**
@@ -346,14 +360,17 @@ export function Home() {
           const isMobileHidden = mobileHiddenSections.includes(id);
           const currentSpan = getSpan(id, homeSectionSpans);
           const sc = spanClass(currentSpan);
+          const currentHeight = getHeightLevel(id, homeSectionHeights);
+          const hc = heightClass(currentHeight);
 
           const widget = renderWidget(id as SectionId);
 
           if (!editMode) {
-            // In non-edit mode the cell IS the direct grid child — span class goes here
+            // In non-edit mode the cell IS the direct grid child — span + height classes go here
             const cellClass = [
               'overview-grid__cell',
               sc,
+              hc,
               isHidden ? 'overview-grid__cell--hidden' : '',
               isMobileHidden ? 'section-mobile-hidden' : '',
             ].filter(Boolean).join(' ');
@@ -366,10 +383,12 @@ export function Home() {
           }
 
           // Edit mode: SortableItem wrapper IS the direct grid child — span class goes there.
-          // The inner cell div holds the content + edit overlays.
+          // The inner cell div holds the content + edit overlays; the height class caps
+          // the inner outline (see Page.css) so the overlays aren't clipped.
           const cellClass = [
             'overview-grid__cell',
             'overview-grid__cell--editing',
+            hc,
             isHidden ? 'overview-grid__cell--hidden' : '',
           ].filter(Boolean).join(' ');
 
@@ -397,6 +416,8 @@ export function Home() {
                 />
                 <SpanDots span={currentSpan} />
                 <ResizeHandle id={id} span={currentSpan} onCommit={handleSpanChange} />
+                <HeightDots level={currentHeight} />
+                <HeightHandle id={id} level={currentHeight} onCommit={handleHeightChange} />
               </div>
             </SortableItem>
           );

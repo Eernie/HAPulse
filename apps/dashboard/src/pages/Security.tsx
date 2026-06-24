@@ -10,6 +10,7 @@ import { PageHeaderActions } from '../components/ui/PageHeaderActions';
 import { EditBadge } from '../components/ui/EditBadge';
 import { SortableGrid } from '../components/ui/SortableGrid';
 import { SortableItem } from '../components/ui/SortableItem';
+import { HeightHandle, HeightDots, heightClass, getHeightLevel } from '../components/ui/SectionResize';
 import { SecurityHeroCard } from '../components/security/SecurityHeroCard';
 import { AlarmPanelCard } from '../components/security/AlarmPanelCard';
 import { PeopleList } from '../components/security/PeopleList';
@@ -157,6 +158,7 @@ export function Security() {
   const hiddenSecuritySections = useSettingsStore(useShallow((s) => s.customization.hiddenSecuritySections));
   const mobileHiddenSecuritySections = useSettingsStore(useShallow((s) => s.customization.mobileHiddenSecuritySections));
   const securitySectionSpans = useSettingsStore(useShallow((s) => s.customization.securitySectionSpans));
+  const securitySectionHeights = useSettingsStore(useShallow((s) => s.customization.securitySectionHeights));
   const updateCustomization = useSettingsStore((s) => s.updateCustomization);
   const editMode = useUIStore((s) => s.editMode);
 
@@ -242,6 +244,12 @@ export function Security() {
       securitySectionSpans: { ...securitySectionSpans, [id]: newSpan },
     });
   }, [securitySectionSpans, updateCustomization]);
+
+  const handleHeightChange = useCallback((id: string, newLevel: number) => {
+    updateCustomization({
+      securitySectionHeights: { ...securitySectionHeights, [id]: newLevel },
+    });
+  }, [securitySectionHeights, updateCustomization]);
 
   const handleReorder = useCallback((newOrder: string[]) => {
     updateCustomization({ securitySectionOrder: newOrder });
@@ -348,6 +356,8 @@ export function Security() {
           const isMobileHidden = mobileHiddenSecuritySections.includes(id);
           const currentSpan = getSpan(id, securitySectionSpans);
           const sc          = spanClass(currentSpan);
+          const currentHeight = getHeightLevel(id, securitySectionHeights);
+          const hc            = heightClass(currentHeight);
           const widget      = renderWidget(id);
 
           if (!widget) return null;
@@ -356,7 +366,7 @@ export function Security() {
             return (
               <div
                 key={id}
-                className={['overview-grid__cell', sc, isHidden ? 'overview-grid__cell--hidden' : '', isMobileHidden ? 'section-mobile-hidden' : ''].filter(Boolean).join(' ')}
+                className={['overview-grid__cell', sc, hc, isHidden ? 'overview-grid__cell--hidden' : '', isMobileHidden ? 'section-mobile-hidden' : ''].filter(Boolean).join(' ')}
                 data-section={id}
               >
                 {widget}
@@ -367,7 +377,7 @@ export function Security() {
           return (
             <SortableItem key={id} id={id} editMode={editMode} className={sc}>
               <div
-                className={['overview-grid__cell', 'overview-grid__cell--editing', isHidden ? 'overview-grid__cell--hidden' : ''].filter(Boolean).join(' ')}
+                className={['overview-grid__cell', 'overview-grid__cell--editing', hc, isHidden ? 'overview-grid__cell--hidden' : ''].filter(Boolean).join(' ')}
                 data-section={id}
               >
                 <div className="edit-section-outline">{widget}</div>
@@ -381,6 +391,8 @@ export function Security() {
                 />
                 <SpanDots span={currentSpan} />
                 <ResizeHandle id={id} span={currentSpan} onCommit={handleSpanChange} />
+                <HeightDots level={currentHeight} />
+                <HeightHandle id={id} level={currentHeight} onCommit={handleHeightChange} />
               </div>
             </SortableItem>
           );

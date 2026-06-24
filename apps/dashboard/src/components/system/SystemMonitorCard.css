@@ -42,7 +42,13 @@
   gap: 1rem;
   overflow-y: auto;
   max-height: 400px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
 }
+
+.sys-monitor-card__groups::-webkit-scrollbar { width: 4px; }
+.sys-monitor-card__groups::-webkit-scrollbar-track { background: transparent; }
+.sys-monitor-card__groups::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
 
 .sys-monitor-group__label {
   display: flex;

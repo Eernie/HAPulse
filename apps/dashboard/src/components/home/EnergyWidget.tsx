@@ -80,6 +80,7 @@ export function EnergyWidget() {
         </button>
       </div>
 
+      <div className="card-scroll-body card-scroll-wrap">
       <div className="energy-widget__value-row">
         <span className="energy-widget__value">{fmtEnergy(dashboard.homeConsumption)}</span>
         <span className="energy-widget__unit">kWh</span>
@@ -96,6 +97,7 @@ export function EnergyWidget() {
           ))}
         </div>
       )}
+      </div>
     </Card>
   );
 }

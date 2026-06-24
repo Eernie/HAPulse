@@ -104,12 +104,12 @@ export const DEMO_NOTIFICATIONS: PersistentNotification[] = [
 
 export const DEMO_REGISTRIES: Registries = {
   areas: [
-    { area_id: 'living_room', name: 'Living Room', icon: 'sofa' },
-    { area_id: 'kitchen', name: 'Kitchen', icon: 'utensils' },
-    { area_id: 'bedroom', name: 'Bedroom', icon: 'bed' },
-    { area_id: 'office', name: 'Office', icon: 'monitor' },
-    { area_id: 'bathroom', name: 'Bathroom', icon: 'bath' },
-    { area_id: 'hallway', name: 'Hallway', icon: 'door-open' },
+    { area_id: 'living_room', name: 'Living Room', icon: 'mdi:sofa' },
+    { area_id: 'kitchen', name: 'Kitchen', icon: 'mdi:silverware-fork-knife' },
+    { area_id: 'bedroom', name: 'Bedroom', icon: 'mdi:bed' },
+    { area_id: 'office', name: 'Office', icon: 'mdi:desk' },
+    { area_id: 'bathroom', name: 'Bathroom', icon: 'mdi:shower' },
+    { area_id: 'hallway', name: 'Hallway', icon: 'mdi:door' },
   ],
   devices: ([
     // Living Room

@@ -98,7 +98,7 @@ export function SystemMonitorCard({ entities }: SystemMonitorCardProps) {
         <span className="sys-monitor-card__title">System Monitor</span>
       </div>
 
-      <div className="sys-monitor-card__groups">
+      <div className="sys-monitor-card__groups card-scroll-body">
         {groups.map((group) => (
           <div key={group.label} className="sys-monitor-group">
             <div className="sys-monitor-group__label">

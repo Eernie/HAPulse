@@ -47,24 +47,36 @@ export interface CustomizationSettings {
   hiddenSections: string[];
   /** Per-room section display order: areaId → ordered section keys */
   roomSectionOrder: Record<string, string[]>;
+  /**
+   * Per-room section column span on the room page's 2-column grid, keyed by
+   * `${areaId}:${sectionKey}`. 1 = half width, 2 = full width (the default when
+   * unset). Lets a user narrow individual room sections like the other pages.
+   */
+  roomSectionSpans: Record<string, number>;
   /** Ordered navigation item ids (sidebar + mobile tabs). */
   navOrder: string[];
   /** Navigation item ids that are hidden. */
   hiddenNav: string[];
   /** Per-section column span overrides on the home overview grid (1–4). */
   homeSectionSpans: Record<string, number>;
+  /** Per-section max-height level on the home overview grid (0 = no cap, 1–4). */
+  homeSectionHeights: Record<string, number>;
   /** Ordered Automations section ids (hero, activity, cat_*). */
   automationSectionOrder: string[];
   /** Automation section ids that are hidden. */
   hiddenAutomationSections: string[];
   /** Per-section column span overrides on the automations grid (1–4). */
   automationSectionSpans: Record<string, number>;
+  /** Per-section max-height level on the automations grid (0 = no cap, 1–4). */
+  automationSectionHeights: Record<string, number>;
   /** Ordered Scenes section ids (hero, activity, room_*). */
   sceneSectionOrder: string[];
   /** Scene section ids that are hidden. */
   hiddenSceneSections: string[];
   /** Per-section column span overrides on the scenes grid (1–4). */
   sceneSectionSpans: Record<string, number>;
+  /** Per-section max-height level on the scenes grid (0 = no cap, 1–4). */
+  sceneSectionHeights: Record<string, number>;
   /** Ordered Music page section ids (now_playing, other_players, zones). */
   musicSectionOrder: string[];
   /** Music section ids that are hidden. */
@@ -77,6 +89,8 @@ export interface CustomizationSettings {
   hiddenSecuritySections: string[];
   /** Per-section column span overrides on the security grid (1–4). */
   securitySectionSpans: Record<string, number>;
+  /** Per-section max-height level on the security grid (0 = no cap, 1–4). */
+  securitySectionHeights: Record<string, number>;
   /** Whether admin editing controls (edit buttons on pages, rooms in settings) are shown. */
   editingEnabled: boolean;
   /** Ordered System page section ids. */
@@ -85,12 +99,16 @@ export interface CustomizationSettings {
   hiddenSystemSections: string[];
   /** Per-section column span overrides on the system grid (1–4). */
   systemSectionSpans: Record<string, number>;
+  /** Per-section max-height level on the system grid (0 = no cap, 1–4). */
+  systemSectionHeights: Record<string, number>;
   /** Ordered Energy page section ids (hero, usage, devices, solar, water, gas). */
   energySectionOrder: string[];
   /** Energy section ids that are hidden. */
   hiddenEnergySections: string[];
   /** Per-section column span overrides on the energy grid (1–4). */
   energySectionSpans: Record<string, number>;
+  /** Per-section max-height level on the energy grid (0 = no cap, 1–4). */
+  energySectionHeights: Record<string, number>;
   /**
    * Section ids hidden on MOBILE ONLY (still shown on desktop/larger screens),
    * one list per page. These are independent of the full hidden* lists above:
@@ -141,28 +159,35 @@ const DEFAULT_CUSTOMIZATION: CustomizationSettings = {
   homeSectionOrder: [],
   hiddenSections: ['blinds'],
   roomSectionOrder: {},
+  roomSectionSpans: {},
   navOrder: [],
   hiddenNav: [],
   homeSectionSpans: {},
+  homeSectionHeights: {},
   automationSectionOrder: [],
   hiddenAutomationSections: [],
   automationSectionSpans: {},
+  automationSectionHeights: {},
   sceneSectionOrder: [],
   hiddenSceneSections: [],
   sceneSectionSpans: {},
+  sceneSectionHeights: {},
   musicSectionOrder: [],
   hiddenMusicSections: [],
   musicSectionSpans: {},
   securitySectionOrder: [],
   hiddenSecuritySections: [],
   securitySectionSpans: {},
+  securitySectionHeights: {},
   editingEnabled: true,
   systemSectionOrder: [],
   hiddenSystemSections: [],
   systemSectionSpans: {},
+  systemSectionHeights: {},
   energySectionOrder: [],
   hiddenEnergySections: [],
   energySectionSpans: {},
+  energySectionHeights: {},
   mobileHiddenSections: [],
   mobileHiddenAutomationSections: [],
   mobileHiddenSceneSections: [],

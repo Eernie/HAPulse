@@ -9,6 +9,7 @@ import { PageHeaderActions } from '../components/ui/PageHeaderActions';
 import { EditBadge } from '../components/ui/EditBadge';
 import { SortableGrid } from '../components/ui/SortableGrid';
 import { SortableItem } from '../components/ui/SortableItem';
+import { HeightHandle, HeightDots, heightClass, getHeightLevel } from '../components/ui/SectionResize';
 import { ActivityCard } from '../components/home/ActivityCard';
 import { SystemHeroCard } from '../components/system/SystemHeroCard';
 import { SystemMonitorCard } from '../components/system/SystemMonitorCard';
@@ -134,6 +135,7 @@ export function System() {
   const hiddenSystemSections   = useSettingsStore(useShallow((s) => s.customization.hiddenSystemSections));
   const mobileHiddenSystemSections = useSettingsStore(useShallow((s) => s.customization.mobileHiddenSystemSections));
   const systemSectionSpans     = useSettingsStore(useShallow((s) => s.customization.systemSectionSpans));
+  const systemSectionHeights   = useSettingsStore(useShallow((s) => s.customization.systemSectionHeights));
   const updateCustomization    = useSettingsStore((s) => s.updateCustomization);
   const editMode               = useUIStore((s) => s.editMode);
 
@@ -215,6 +217,12 @@ export function System() {
     });
   }, [systemSectionSpans, updateCustomization]);
 
+  const handleHeightChange = useCallback((id: string, newLevel: number) => {
+    updateCustomization({
+      systemSectionHeights: { ...systemSectionHeights, [id]: newLevel },
+    });
+  }, [systemSectionHeights, updateCustomization]);
+
   const handleReorder = useCallback((newOrder: string[]) => {
     updateCustomization({ systemSectionOrder: newOrder });
   }, [updateCustomization]);
@@ -256,6 +264,8 @@ export function System() {
           const isMobileHidden = mobileHiddenSystemSections.includes(id);
           const currentSpan = getSpan(id, systemSectionSpans);
           const sc          = spanClass(currentSpan);
+          const currentHeight = getHeightLevel(id, systemSectionHeights);
+          const hc            = heightClass(currentHeight);
           const widget      = renderWidget(id);
 
           if (!widget) return null;
@@ -264,7 +274,7 @@ export function System() {
             return (
               <div
                 key={id}
-                className={['overview-grid__cell', sc, isMobileHidden ? 'section-mobile-hidden' : ''].filter(Boolean).join(' ')}
+                className={['overview-grid__cell', sc, hc, isMobileHidden ? 'section-mobile-hidden' : ''].filter(Boolean).join(' ')}
                 data-section={id}
               >
                 {widget}
@@ -278,6 +288,7 @@ export function System() {
                 className={[
                   'overview-grid__cell',
                   'overview-grid__cell--editing',
+                  hc,
                   isHidden ? 'overview-grid__cell--hidden' : '',
                 ].filter(Boolean).join(' ')}
                 data-section={id}
@@ -293,6 +304,8 @@ export function System() {
                 />
                 <SpanDots span={currentSpan} />
                 <ResizeHandle id={id} span={currentSpan} onCommit={handleSpanChange} />
+                <HeightDots level={currentHeight} />
+                <HeightHandle id={id} level={currentHeight} onCommit={handleHeightChange} />
               </div>
             </SortableItem>
           );

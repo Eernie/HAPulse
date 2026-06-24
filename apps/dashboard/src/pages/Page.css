@@ -64,3 +64,124 @@
 .section-mobile-hidden-contents {
   display: contents;
 }
+
+/* =========================================================
+   Section height levels (overview-grid pages)
+   Applied to the [data-section] cell via .section-h-N. Level 0 = no class =
+   no cap (default). The px values MUST match HEIGHT_PX in
+   components/ui/SectionResize.tsx.
+
+   To keep a card's header fixed while the rest scrolls, the card itself becomes
+   the scroll container and its first child (the header) is pinned with
+   position:sticky. This works for every card structure (list cards, the gauge
+   cards, multi-section cards) — unlike targeting a single "body" element, which
+   varies per card.
+
+   View mode: the cell IS the grid item — cap it with max-height so a section
+   with little content still shrinks to fit.
+   Edit mode: give the inner .edit-section-outline a FIXED height so the chosen
+   level is visible at a glance (preview the four sizes). The outline is capped
+   instead of the cell so the absolutely-positioned overlays (badges, dots,
+   handles) — siblings of the outline — are never clipped.
+   ========================================================= */
+
+/* ---- Caps: max-height on the cell (view) / fixed height on outline (edit) ---- */
+.overview-grid__cell.section-h-1:not(.overview-grid__cell--editing) { max-height: 180px; }
+.overview-grid__cell.section-h-2:not(.overview-grid__cell--editing) { max-height: 280px; }
+.overview-grid__cell.section-h-3:not(.overview-grid__cell--editing) { max-height: 400px; }
+.overview-grid__cell.section-h-4:not(.overview-grid__cell--editing) { max-height: 560px; }
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) { overflow: hidden; }
+
+.overview-grid__cell--editing.section-h-1 .edit-section-outline { height: 180px; }
+.overview-grid__cell--editing.section-h-2 .edit-section-outline { height: 280px; }
+.overview-grid__cell--editing.section-h-3 .edit-section-outline { height: 400px; }
+.overview-grid__cell--editing.section-h-4 .edit-section-outline { height: 560px; }
+/* The outline is normally flex:1 (basis 0); pin it so the explicit height wins. */
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline {
+  overflow: hidden;
+  flex: none;
+}
+
+/* =========================================================
+   Capped cards WITH a dedicated scroll body (.card-scroll-body)
+   The body scrolls; the header stays in normal flow. The scrollbar sits only
+   beside the list — matching the app's other list cards (e.g. Window Sensor).
+   ========================================================= */
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) > *:has(.card-scroll-body),
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline > *:has(.card-scroll-body) {
+  max-height: none;
+  min-height: 0;
+  overflow: hidden;
+}
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) > *:has(.card-scroll-body) > :first-child,
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline > *:has(.card-scroll-body) > :first-child {
+  flex: 0 0 auto; /* header doesn't scroll or shrink */
+}
+.overview-grid__cell[class*="section-h-"] .card-scroll-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+/* Wrappers around multi-element bodies become a real flex column once capped
+   (they are display:contents otherwise — see below — so layout is unchanged). */
+.overview-grid__cell[class*="section-h-"] .card-scroll-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.overview-grid__cell[class*="section-h-"] .card-scroll-body::-webkit-scrollbar { width: 4px; }
+.overview-grid__cell[class*="section-h-"] .card-scroll-body::-webkit-scrollbar-track { background: transparent; }
+.overview-grid__cell[class*="section-h-"] .card-scroll-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+/* =========================================================
+   Fallback — capped cards WITHOUT a dedicated body (e.g. Hero, cards on other
+   pages): scroll the whole card with a pinned (sticky) header. The card's top
+   padding is relocated onto the header so its containing block reaches the
+   scroll top (otherwise content peeks through the padding gap above it).
+   ========================================================= */
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) > *:not(:has(.card-scroll-body)),
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline > *:not(:has(.card-scroll-body)) {
+  max-height: none;
+  min-height: 0;
+  padding-top: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) > *:not(:has(.card-scroll-body)) > :first-child,
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline > *:not(:has(.card-scroll-body)) > :first-child {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-top: 1.25rem;
+  background: var(--bg-card);
+}
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) > *:not(:has(.card-scroll-body)):hover > :first-child,
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline > *:not(:has(.card-scroll-body)):hover > :first-child {
+  background: var(--bg-card-hover);
+}
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) > *:not(:has(.card-scroll-body))::-webkit-scrollbar,
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline > *:not(:has(.card-scroll-body))::-webkit-scrollbar {
+  width: 4px;
+}
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) > *:not(:has(.card-scroll-body))::-webkit-scrollbar-track,
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline > *:not(:has(.card-scroll-body))::-webkit-scrollbar-track {
+  background: transparent;
+}
+.overview-grid__cell[class*="section-h-"]:not(.overview-grid__cell--editing) > *:not(:has(.card-scroll-body))::-webkit-scrollbar-thumb,
+.overview-grid__cell--editing[class*="section-h-"] .edit-section-outline > *:not(:has(.card-scroll-body))::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 2px;
+}
+
+/* Body wrappers are layout-neutral (no box) until their card is capped, so the
+   uncapped card looks exactly as before. Gaps match each card's own gap so the
+   spacing is identical once the wrapper becomes a flex column. */
+.card-scroll-wrap { display: contents; }
+.security-card .card-scroll-wrap,
+.climate-card .card-scroll-wrap { gap: 0; }
+.energy-widget .card-scroll-wrap { gap: 0.75rem; }

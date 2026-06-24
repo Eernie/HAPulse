@@ -4,7 +4,7 @@ import {
   PartyPopper, BookOpen, Coffee, Music2,
 } from 'lucide-react';
 import { Card } from '../ui/Card';
-import { RoomIcon } from '../ui/RoomIcon';
+import { RoomDisplayIcon } from '../ui/RoomDisplayIcon';
 import { callService } from '../../ha/service';
 import type { HassEntity } from '@hapulse/core';
 import '../../components/home/ScenesCard.css';
@@ -12,7 +12,10 @@ import './SceneRoomCard.css';
 
 interface SceneRoomCardProps {
   roomName: string;
+  /** Resolved lucide icon name (fallback when no usable HA mdi: icon). */
   roomIcon: string;
+  /** Raw HA icon string for the room, e.g. "mdi:sofa" (null for synthetic rooms). */
+  roomHaIcon?: string | null | undefined;
   scenes: HassEntity[];
 }
 
@@ -43,13 +46,18 @@ function sceneName(e: HassEntity): string {
   );
 }
 
-export function SceneRoomCard({ roomName, roomIcon, scenes }: SceneRoomCardProps) {
+export function SceneRoomCard({ roomName, roomIcon, roomHaIcon, scenes }: SceneRoomCardProps) {
   return (
     <Card className="scene-room-card">
       <div className="scene-room-card__header">
         <div className="scene-room-card__title-row">
           <span className="scene-room-card__icon-chip" aria-hidden="true">
-            <RoomIcon name={roomIcon} size={14} strokeWidth={1.75} />
+            <RoomDisplayIcon
+              roomIcon={roomHaIcon}
+              iconName={roomIcon}
+              isStatus={false}
+              size={14}
+            />
           </span>
           <span className="scene-room-card__title">{roomName}</span>
         </div>

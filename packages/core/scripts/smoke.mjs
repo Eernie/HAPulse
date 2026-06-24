@@ -30,6 +30,7 @@ import {
   roomIconName,
   roomStatusIconName,
   CANONICAL_ROOM_ICONS,
+  mdiIconExportName,
 } from '../dist/index.js';
 
 let passed = 0;
@@ -189,6 +190,18 @@ assertEqual(roomIconName({ name: 'Living Room', icon: 'sofa' }), 'sofa', 'passth
 assertEqual(roomIconName({ name: 'Foobar' }), 'house', 'unknown name → house');
 assertEqual(roomIconName({ name: 'Master Suite', icon: 'mdi:bed-double' }), 'bed', 'mdi:bed-double → bed');
 assertEqual(roomIconName({ name: 'Hallway', icon: 'door-open' }), 'door-open', 'passthrough door-open → door-open');
+
+console.log('\n── mdiIconExportName ──');
+assertEqual(mdiIconExportName('mdi:sofa-outline'), 'mdiSofaOutline', 'mdi:sofa-outline → mdiSofaOutline');
+assertEqual(mdiIconExportName('mdi:sofa'), 'mdiSofa', 'mdi:sofa → mdiSofa');
+assertEqual(mdiIconExportName('sofa-outline'), 'mdiSofaOutline', 'bare sofa-outline → mdiSofaOutline');
+assertEqual(mdiIconExportName('mdi:silverware-fork-knife'), 'mdiSilverwareForkKnife', 'multi-segment kebab → camel');
+assertEqual(mdiIconExportName('mdi:numeric-1-box'), 'mdiNumeric1Box', 'digits preserved in segments');
+assertEqual(mdiIconExportName('MDI:Sofa'), 'mdiSofa', 'case-insensitive prefix/name');
+assertEqual(mdiIconExportName(''), null, 'empty → null');
+assertEqual(mdiIconExportName(null), null, 'null → null');
+assertEqual(mdiIconExportName('hass:foo'), null, 'other icon pack → null');
+assertEqual(mdiIconExportName('mdi:bad name'), null, 'invalid chars → null');
 
 console.log('\n── roomStatusIconName ──');
 

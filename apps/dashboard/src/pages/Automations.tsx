@@ -7,6 +7,7 @@ import { AutomationCategoryCard } from '../components/automation/AutomationCateg
 import { SortableGrid } from '../components/ui/SortableGrid';
 import { SortableItem } from '../components/ui/SortableItem';
 import { EditBadge } from '../components/ui/EditBadge';
+import { HeightHandle, HeightDots, heightClass, getHeightLevel } from '../components/ui/SectionResize';
 import { EditToggle } from '../components/ui/EditToggle';
 import { PageHeaderActions } from '../components/ui/PageHeaderActions';
 import { useEntitiesByDomain } from '../ha/hooks';
@@ -166,6 +167,9 @@ export function Automations() {
   const automationSectionSpans = useSettingsStore(
     useShallow((s) => s.customization.automationSectionSpans)
   );
+  const automationSectionHeights = useSettingsStore(
+    useShallow((s) => s.customization.automationSectionHeights)
+  );
   const updateCustomization = useSettingsStore((s) => s.updateCustomization);
 
   // Derive categories from live automation entities
@@ -255,6 +259,15 @@ export function Automations() {
     [automationSectionSpans, updateCustomization]
   );
 
+  const handleHeightChange = useCallback(
+    (id: string, newLevel: number) => {
+      updateCustomization({
+        automationSectionHeights: { ...automationSectionHeights, [id]: newLevel },
+      });
+    },
+    [automationSectionHeights, updateCustomization]
+  );
+
   const handleReorder = useCallback(
     (newOrder: string[]) => {
       updateCustomization({ automationSectionOrder: newOrder });
@@ -325,12 +338,15 @@ export function Automations() {
             const isMobileHidden = mobileHiddenAutomationSections.includes(id);
             const currentSpan = getSpan(id, automationSectionSpans);
             const sc          = spanClass(currentSpan);
+            const currentHeight = getHeightLevel(id, automationSectionHeights);
+            const hc            = heightClass(currentHeight);
             const widget      = renderWidget(id);
 
             if (!editMode) {
               const cellClass = [
                 'overview-grid__cell',
                 sc,
+                hc,
                 isHidden ? 'overview-grid__cell--hidden' : '',
                 isMobileHidden ? 'section-mobile-hidden' : '',
               ].filter(Boolean).join(' ');
@@ -345,6 +361,7 @@ export function Automations() {
             const cellClass = [
               'overview-grid__cell',
               'overview-grid__cell--editing',
+              hc,
               isHidden ? 'overview-grid__cell--hidden' : '',
             ].filter(Boolean).join(' ');
 
@@ -366,6 +383,8 @@ export function Automations() {
                   />
                   <SpanDots span={currentSpan} />
                   <ResizeHandle id={id} span={currentSpan} onCommit={handleSpanChange} />
+                  <HeightDots level={currentHeight} />
+                  <HeightHandle id={id} level={currentHeight} onCommit={handleHeightChange} />
                 </div>
               </SortableItem>
             );
