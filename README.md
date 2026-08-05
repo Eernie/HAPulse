@@ -19,6 +19,7 @@ HAPulse is a fully client-side single-page app that connects directly to your Ho
 - **System** — CPU, RAM, and disk metrics from the System Monitor integration, battery levels for all devices, and a health indicator in the sidebar
 - **Four themes** — Aurora (warm dark, default), Sunset, Ocean, Forest — each with light, dark, and auto (OS) mode
 - **Full edit mode** — drag to reorder, resize, and hide any section or card on every page
+- **Settings stored in your Home Assistant** — your layout and customization are saved to HA's per-user storage, so they survive browser storage being cleared and sync live across every device you use with the same HA login
 - **Settings export / import** — back up your entire layout and customization to a JSON file; import it on any other browser or share with household members
 - **Demo mode** — explore the full UI without a Home Assistant connection
 - **Fully client-side** — tokens are stored only in your browser's `localStorage` and never sent anywhere except your own HA instance

@@ -140,15 +140,26 @@ docker compose -f docker/docker-compose.yml up -d
 
 ## Where settings are stored
 
-All HAPulse settings are stored in **your browser's `localStorage`** under two keys:
+Once you are connected, your settings are stored **in your own Home Assistant**, using its per-user `frontend/user_data` storage (the same mechanism HA's own frontend uses for user preferences). HAPulse writes them under the key `hapulse:settings`, scoped to the Home Assistant user you signed in as.
 
-| Key | Contents |
-|---|---|
-| `hapulse:connection` | HA URL, long-lived access token, demo flag |
-| `hapulse:settings` | Theme, accent color, room order, hidden rooms/entities, entity overrides |
+This means your theme, layout, room order and hidden items:
 
-Nothing is sent to any server. The nginx container has no knowledge of your settings.
+- **survive your browser clearing its storage** (Safari and some hardened browsers evict site storage after ~7 days of inactivity), and
+- **sync across every browser and device** you use with the same Home Assistant login — change the theme on your laptop and your phone follows, live.
 
-**Exporting and importing settings**: Settings → scroll to the bottom → Export config / Import config. The exported JSON contains everything in `hapulse:settings` and can be imported on another device or browser to replicate your layout exactly.
+The browser still keeps a local copy so the first paint is instant and onboarding works before you are connected:
 
-To reset completely, clear localStorage for the HAPulse origin (browser DevTools → Application → Local Storage → Clear all, or use the Disconnect button in Settings which wipes `hapulse:connection`).
+| Where | Key | Contents |
+|---|---|---|
+| Home Assistant (per HA user) | `hapulse:settings` | Theme, accent color, room order, hidden rooms/entities, entity overrides — the source of truth once connected |
+| Browser `localStorage` | `hapulse:settings` | Local cache of the above |
+| Browser `localStorage` | `hapulse:connection` | HA URL, demo flag |
+| Browser `localStorage` | `hapulse:ha-tokens` | OAuth tokens / long-lived access token — **never** leaves your browser |
+
+Nothing is sent to any HAPulse server — the nginx container has no knowledge of your settings, and your access token is never written to Home Assistant or anywhere else. Settings only travel between your browser and your own HA instance.
+
+> Because HA is the source of truth once connected, settings you change while HA is unreachable are overwritten by HA's copy when you reconnect.
+
+**Exporting and importing settings**: Settings → scroll to the bottom → Export config / Import config. The exported JSON can be imported on another device, shared with household members, or kept as a backup.
+
+To reset completely, clear localStorage for the HAPulse origin (browser DevTools → Application → Local Storage → Clear all) **and** remove the stored HA copy — otherwise it will be adopted again on the next connect. The Disconnect button in Settings wipes the connection keys only.
