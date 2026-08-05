@@ -15,6 +15,19 @@ export type { AuthData } from 'home-assistant-js-websocket';
 // Errors
 export { HAAuthError, HAConnectionError } from './errors.js';
 
+// OAuth (mobile-friendly authorization-code flow helpers)
+export { buildHAAuthorizeUrl, exchangeHAAuthCode, connectWithAuthData } from './oauth.js';
+
+// Themes
+export {
+  THEMES,
+  THEME_NAMES,
+  THEME_LABELS,
+  resolveThemeMode,
+  accentOverride,
+} from './themes.js';
+export type { ThemeName, ThemeMode, ResolvedMode, ThemeTokens } from './themes.js';
+
 // Rooms
 export { buildRooms, roomSummary } from './rooms.js';
 

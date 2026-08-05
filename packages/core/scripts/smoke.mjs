@@ -9,6 +9,10 @@
  *  - domainOf, isToggleable, formatEntityState, domainIcon work correctly
  *  - createDemoTicker fires callbacks
  *  - applyDemoService mutates state correctly
+ *  - THEMES has all 4 identities with matching light/dark token key sets
+ *  - resolveThemeMode / accentOverride pure theme math
+ *  - buildHAAuthorizeUrl / exchangeHAAuthCode / connectWithAuthData (mobile OAuth)
+ *  - HAConnection.suspend is exported
  */
 
 import {
@@ -31,6 +35,15 @@ import {
   roomStatusIconName,
   CANONICAL_ROOM_ICONS,
   mdiIconExportName,
+  THEMES,
+  THEME_NAMES,
+  THEME_LABELS,
+  resolveThemeMode,
+  accentOverride,
+  buildHAAuthorizeUrl,
+  exchangeHAAuthCode,
+  connectWithAuthData,
+  HAConnection,
 } from '../dist/index.js';
 
 let passed = 0;
@@ -374,6 +387,146 @@ try {
 // startHASignIn and resumeHASession are exported and callable
 assert(typeof startHASignIn === 'function', 'startHASignIn exported as function');
 assert(typeof resumeHASession === 'function', 'resumeHASession exported as function');
+
+// ---------------------------------------------------------------------------
+// THEMES
+// ---------------------------------------------------------------------------
+
+console.log('\n── THEMES ──');
+
+const expectedThemeNames = ['aurora', 'sunset', 'ocean', 'forest'];
+assertEqual(THEME_NAMES.length, 4, 'THEME_NAMES has exactly 4 identities');
+assert(
+  expectedThemeNames.every((n) => THEME_NAMES.includes(n)),
+  'THEME_NAMES has exactly the 4 expected identities'
+);
+assert(
+  Object.keys(THEMES).length === 4 && expectedThemeNames.every((n) => n in THEMES),
+  'THEMES has exactly the 4 expected identities'
+);
+
+for (const name of THEME_NAMES) {
+  assert(THEMES[name] && THEMES[name].light && THEMES[name].dark, `THEMES.${name} has light + dark variants`);
+  assert(typeof THEME_LABELS[name] === 'string' && THEME_LABELS[name].length > 0, `THEME_LABELS.${name} is a non-empty string`);
+}
+
+// Spot-check known token values (aurora is the default identity)
+assertEqual(THEMES.aurora.light.accent, '#f2941c', 'THEMES.aurora.light.accent');
+assertEqual(THEMES.aurora.dark.accent, '#f5a623', 'THEMES.aurora.dark.accent');
+assertEqual(THEMES.aurora.light.bg, '#f3f4f6', 'THEMES.aurora.light.bg');
+assertEqual(THEMES.forest.dark.accent, '#5cc486', 'THEMES.forest.dark.accent');
+assertEqual(THEMES.ocean.light.accent, '#2f7fd6', 'THEMES.ocean.light.accent');
+
+// Every token set (across all identities and both modes) has identical key sets
+const referenceKeys = Object.keys(THEMES.aurora.light).sort().join(',');
+let allKeysMatch = true;
+for (const name of THEME_NAMES) {
+  for (const mode of ['light', 'dark']) {
+    const keys = Object.keys(THEMES[name][mode]).sort().join(',');
+    if (keys !== referenceKeys) allKeysMatch = false;
+  }
+}
+assert(allKeysMatch, 'every THEMES token set has an identical key set');
+
+// ---------------------------------------------------------------------------
+// resolveThemeMode
+// ---------------------------------------------------------------------------
+
+console.log('\n── resolveThemeMode ──');
+
+assertEqual(resolveThemeMode('auto', true), 'dark', "resolveThemeMode('auto', true) === 'dark'");
+assertEqual(resolveThemeMode('auto', false), 'light', "resolveThemeMode('auto', false) === 'light'");
+assertEqual(resolveThemeMode('dark', false), 'dark', "resolveThemeMode('dark', false) === 'dark'");
+assertEqual(resolveThemeMode('light', true), 'light', "resolveThemeMode('light', true) === 'light'");
+
+// ---------------------------------------------------------------------------
+// accentOverride
+// ---------------------------------------------------------------------------
+
+console.log('\n── accentOverride ──');
+
+const overrideLight = accentOverride(200, 'light');
+const overrideDark = accentOverride(200, 'dark');
+
+assert(typeof overrideLight.accent === 'string', 'accentOverride(light).accent is a string');
+assert(typeof overrideLight.accentSoft === 'string', 'accentOverride(light).accentSoft is a string');
+assert(typeof overrideLight.onAccent === 'string', 'accentOverride(light).onAccent is a string');
+assert(
+  overrideLight.accent !== overrideDark.accent ||
+    overrideLight.accentSoft !== overrideDark.accentSoft ||
+    overrideLight.onAccent !== overrideDark.onAccent,
+  'accentOverride differs between light and dark mode'
+);
+assertEqual(overrideLight.accent, 'hsl(200, 78%, 50%)', 'accentOverride(200, light).accent');
+assertEqual(overrideDark.accent, 'hsl(200, 78%, 60%)', 'accentOverride(200, dark).accent');
+assertEqual(overrideLight.onAccent, '#ffffff', 'accentOverride(200, light).onAccent');
+assertEqual(overrideDark.onAccent, '#140e04', 'accentOverride(200, dark).onAccent');
+
+// ---------------------------------------------------------------------------
+// buildHAAuthorizeUrl
+// ---------------------------------------------------------------------------
+
+console.log('\n── buildHAAuthorizeUrl ──');
+
+const authorizeUrl = buildHAAuthorizeUrl({
+  hassUrl: 'http://homeassistant.local:8123',
+  clientId: 'hapulse-mobile',
+  redirectUri: 'hapulse://auth-callback',
+  state: 'xyz123',
+});
+assertEqual(
+  authorizeUrl,
+  'http://homeassistant.local:8123/auth/authorize?client_id=hapulse-mobile&redirect_uri=hapulse%3A%2F%2Fauth-callback&state=xyz123',
+  'buildHAAuthorizeUrl encodes redirect_uri and appends state'
+);
+
+// Trailing-slash normalization of hassUrl
+const authorizeUrlNoState = buildHAAuthorizeUrl({
+  hassUrl: 'http://homeassistant.local:8123/',
+  clientId: 'hapulse-mobile',
+  redirectUri: 'hapulse://auth-callback',
+});
+assertEqual(
+  authorizeUrlNoState,
+  'http://homeassistant.local:8123/auth/authorize?client_id=hapulse-mobile&redirect_uri=hapulse%3A%2F%2Fauth-callback',
+  'buildHAAuthorizeUrl strips trailing slash from hassUrl and omits state when absent'
+);
+
+// ---------------------------------------------------------------------------
+// exchangeHAAuthCode
+// ---------------------------------------------------------------------------
+
+console.log('\n── exchangeHAAuthCode ──');
+
+try {
+  await exchangeHAAuthCode({
+    hassUrl: 'http://localhost:9',
+    clientId: 'hapulse-mobile',
+    code: 'fake-code',
+  });
+  assert(false, 'exchangeHAAuthCode should reject for unreachable host');
+} catch (err) {
+  assert(err instanceof HAConnectionError, 'exchangeHAAuthCode rejects with HAConnectionError for unreachable host');
+}
+
+// ---------------------------------------------------------------------------
+// connectWithAuthData + HAConnection.suspend (existence checks; no network)
+// ---------------------------------------------------------------------------
+
+console.log('\n── connectWithAuthData / suspend ──');
+
+assert(typeof connectWithAuthData === 'function', 'connectWithAuthData exported as function');
+assert(typeof HAConnection.prototype.suspend === 'function', 'HAConnection.prototype.suspend exported as function');
+
+// ---------------------------------------------------------------------------
+// HA-backed settings sync (frontend/user_data methods) — existence only, no network
+// ---------------------------------------------------------------------------
+
+console.log('\n── frontend/user_data methods ──');
+
+assert(typeof HAConnection.prototype.getUserData === 'function', 'HAConnection.prototype.getUserData exported as function');
+assert(typeof HAConnection.prototype.setUserData === 'function', 'HAConnection.prototype.setUserData exported as function');
+assert(typeof HAConnection.prototype.subscribeUserData === 'function', 'HAConnection.prototype.subscribeUserData exported as function');
 
 // ---------------------------------------------------------------------------
 // Finish (after ticker or timeout)

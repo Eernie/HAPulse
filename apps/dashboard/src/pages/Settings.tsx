@@ -20,6 +20,7 @@ import { useRooms, useCurrentUserAvatar, useCanEdit } from '../ha/hooks';
 import { THEMES, THEME_NAMES, resolveMode } from '../theme/themes';
 import type { ThemeName, ThemeMode } from '../theme/themes';
 import type { Room, HassEntity } from '@hapulse/core';
+import { isDefaultPersistenceAdapter } from '../persistence';
 
 import { Card } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
@@ -715,6 +716,14 @@ function BackupSection() {
   const { exportSettings, importSettings } = useSettingsStore(
     useShallow((s) => ({ exportSettings: s.exportSettings, importSettings: s.importSettings }))
   );
+  const { connMode, connDemo, connStatus } = useConnectionStore(
+    useShallow((s) => ({ connMode: s.mode, connDemo: s.demo, connStatus: s.status }))
+  );
+
+  // Open-source only: the hosted build syncs settings via Supabase instead
+  // (see ha/settingsSync.ts) — never show this line there.
+  const showHASyncStatus = isDefaultPersistenceAdapter();
+  const haSyncConnected = (connMode === 'oauth' || connMode === 'token') && !connDemo && connStatus === 'connected';
 
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
@@ -797,6 +806,13 @@ function BackupSection() {
         {importSuccess && (
           <p style={{ fontSize: '0.8125rem', color: 'var(--positive)', padding: '0 1.375rem 0.75rem' }} role="status">
             Settings imported successfully.
+          </p>
+        )}
+        {showHASyncStatus && (
+          <p className="backup-hint" style={{ paddingTop: 0, paddingBottom: '1rem' }}>
+            {haSyncConnected
+              ? 'Settings are saved to your Home Assistant and sync across your devices.'
+              : 'Settings will sync to your Home Assistant once connected.'}
           </p>
         )}
       </Card>

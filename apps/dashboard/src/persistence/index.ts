@@ -29,3 +29,14 @@ export function setPersistenceAdapter(adapter: PersistenceAdapter): void {
 export function getPersistenceAdapter(): PersistenceAdapter {
   return activeAdapter;
 }
+
+/**
+ * True when no SaaS adapter has been installed — i.e. this is the open-source
+ * build running against the default localStorage adapter. Used to gate
+ * open-source-only behavior (like syncing settings into Home Assistant's
+ * `frontend/user_data`) so it stays completely inert once a hosted build
+ * calls `setPersistenceAdapter` with a Supabase-backed adapter.
+ */
+export function isDefaultPersistenceAdapter(): boolean {
+  return activeAdapter === localStorageAdapter;
+}

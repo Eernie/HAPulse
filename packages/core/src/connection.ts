@@ -50,6 +50,8 @@ export interface ConnectToHAOptions {
 export class HAConnection {
   readonly #conn: Connection;
   #auth: Auth | null;
+  /** Resume callback for an in-flight suspend() — null when not suspended. */
+  #resumeSuspend: (() => void) | null = null;
 
   constructor(conn: Connection, auth: Auth | null = null) {
     this.#conn = conn;
@@ -236,6 +238,74 @@ export class HAConnection {
   }
 
   /**
+   * Fetch a value previously stored under `key` via `frontend/set_user_data`
+   * (`frontend/get_user_data`). Home Assistant returns the value wrapped in a
+   * `{ value: ... }` envelope; this unwraps it and returns `null` when the key
+   * has never been set (HA responds with `{ value: null }`).
+   *
+   * Swallows errors (unsupported command on very old core, network hiccup,
+   * etc.) and resolves to `null` — like `fetchEnergyPrefs`, a missing/broken
+   * frontend storage command must never break app boot.
+   */
+  async getUserData<T = unknown>(key: string): Promise<T | null> {
+    try {
+      const result = await this.#conn.sendMessagePromise<{ value: T | null }>({
+        type: 'frontend/get_user_data',
+        key,
+      });
+      return result?.value ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Persist a value under `key` via `frontend/set_user_data`, scoped to the
+   * signed-in HA user (stored server-side as `frontend.user_data_{user_id}`).
+   * `value` must be JSON-serializable (bool/str/int/float/dict/list/null).
+   */
+  async setUserData(key: string, value: unknown): Promise<void> {
+    await this.#conn.sendMessagePromise({
+      type: 'frontend/set_user_data',
+      key,
+      value,
+    });
+  }
+
+  /**
+   * Subscribe to live updates for a `frontend/user_data` key
+   * (`frontend/subscribe_user_data`). Mirrors the `subscribeNotifications`
+   * pattern: subscribes asynchronously, guards against a `cancelled`
+   * unsubscribe racing the subscribe call, and returns a synchronous
+   * unsubscribe function immediately.
+   */
+  subscribeUserData<T = unknown>(key: string, cb: (value: T | null) => void): UnsubscribeFunc {
+    let unsub: (() => void) | null = null;
+    let cancelled = false;
+
+    this.#conn
+      .subscribeMessage<{ value: T | null }>(
+        (msg) => {
+          cb(msg?.value ?? null);
+        },
+        { type: 'frontend/subscribe_user_data', key }
+      )
+      .then((u) => {
+        if (cancelled) u();
+        else unsub = u;
+      })
+      .catch((err: unknown) => {
+        console.warn('[HAPulse] frontend/subscribe_user_data subscribe failed:', err);
+      });
+
+    return () => {
+      cancelled = true;
+      unsub?.();
+      unsub = null;
+    };
+  }
+
+  /**
    * Revoke the OAuth refresh token and clear stored tokens.
    * Call this on sign-out when using the OAuth / getAuth flow.
    * Best-effort — network errors are caught and logged.
@@ -254,6 +324,52 @@ export class HAConnection {
    */
   close(): void {
     this.#conn.close();
+  }
+
+  /**
+   * Suspend the connection for mobile background handling.
+   *
+   * Closes the socket without tearing the connection down: hajsw's internal
+   * close handler (`Connection#_handleClose` in `connection.js`) checks
+   * `suspendReconnectPromise` and, when set, `await`s it before reconnecting
+   * — so no reconnect attempt happens while suspended, and the eventual
+   * reconnect is triggered by hajsw itself once the promise resolves.
+   *
+   * Verified against hajsw's `connection.js`: `suspendReconnectUntil(promise)`
+   * only stores the promise; `suspend()` just closes the socket (and throws
+   * if no suspend promise was set first) — the actual `await` + `reconnect(0)`
+   * live in the `close` event's `_handleClose` handler. Resolving the promise
+   * is therefore sufficient to resume; calling `reconnect(true)` afterwards
+   * would trigger a second, redundant reconnect (and tear down the socket
+   * hajsw is already reconnecting), so this implementation does NOT do that.
+   *
+   * Calling `suspend()` again while already suspended is a no-op that
+   * returns the same `resume` function, guarding against a double-suspend
+   * (which would otherwise throw inside hajsw — `suspend()` requires
+   * `suspendReconnectPromise` to still be set — or leak the first promise).
+   *
+   * @returns a `resume` function; call it to let hajsw reconnect
+   */
+  suspend(): () => void {
+    if (this.#resumeSuspend) {
+      return this.#resumeSuspend;
+    }
+
+    let resolveSuspend: () => void;
+    const suspendPromise = new Promise<void>((resolve) => {
+      resolveSuspend = resolve;
+    });
+
+    this.#conn.suspendReconnectUntil(suspendPromise);
+    this.#conn.suspend();
+
+    const resume = () => {
+      if (this.#resumeSuspend !== resume) return;
+      this.#resumeSuspend = null;
+      resolveSuspend();
+    };
+    this.#resumeSuspend = resume;
+    return resume;
   }
 }
 

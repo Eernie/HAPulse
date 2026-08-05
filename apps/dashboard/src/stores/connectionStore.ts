@@ -24,6 +24,7 @@ import {
 import type { HAConnection, AuthData, UnsubscribeFunc, HAUser, HassEntityMap } from '@hapulse/core';
 import { useEntityStore } from './entityStore';
 import { onboardingRedirectUrl } from '../app/basename';
+import { startHASettingsSync, stopHASettingsSync } from '../ha/settingsSync';
 
 // ---------------------------------------------------------------------------
 // Module-scope connection state (not in Zustand state — mutable references)
@@ -195,6 +196,8 @@ async function loadHATokens(): Promise<AuthData | null | undefined> {
 function teardown(): void {
   cancelPendingEntities();
 
+  stopHASettingsSync();
+
   _unsubEntities?.();
   _unsubEntities = null;
 
@@ -242,6 +245,13 @@ async function wireConnection(
   } catch (err) {
     console.warn('[HAPulse] fetchCurrentUser failed — user identity unavailable:', err);
   }
+
+  // Open-source only (no-ops under a hosted persistence adapter or in demo
+  // mode): adopt/seed settings from HA and keep them in sync across devices.
+  // Runs on every path that reaches a live connection — fresh connect, OAuth
+  // callback, and boot-time session resume — since they all funnel through
+  // this shared setup helper.
+  startHASettingsSync();
 }
 
 // ---------------------------------------------------------------------------
